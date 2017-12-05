@@ -1,0 +1,31 @@
+//* This file is part of the MOOSE framework
+//* https://www.mooseframework.org
+//*
+//* All rights reserved, see COPYRIGHT for full restrictions
+//* https://github.com/idaholab/moose/blob/master/COPYRIGHT
+//*
+//* Licensed under LGPL 2.1, please see LICENSE for details
+//* https://www.gnu.org/licenses/lgpl-2.1.html
+
+#ifndef COMPUTEPLANESTRESSISOTROPICELASTICITYTENSOR_H
+#define COMPUTEPLANESTRESSISOTROPICELASTICITYTENSOR_H
+
+#include "ComputeIsotropicElasticityTensor.h"
+
+/**
+ * ComputePlaneStressIsotropicElasticityTensor defines an elasticity tensor material for
+ * isotropic materials for plane stress case.
+ */
+
+class ComputePlaneStressIsotropicElasticityTensor;
+
+template <>
+InputParameters validParams<ComputePlaneStressIsotropicElasticityTensor>();
+
+class ComputePlaneStressIsotropicElasticityTensor : public ComputeIsotropicElasticityTensor
+{
+public:
+  ComputePlaneStressIsotropicElasticityTensor(const InputParameters & parameters);
+};
+
+#endif // COMPUTEPLANESTRESSISOTROPICELASTICITYTENSOR_H

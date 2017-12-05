@@ -1,0 +1,20 @@
+[Tests]
+  [./conventional_plane_stress_ospd]
+    type = 'Exodiff'
+    input = 'conventional_plane_stress_ospd.i'
+    exodiff = 'conventional_plane_stress_ospd.e'
+    map = false
+  [../]
+  [./conventional_plane_stress_snospd]
+    type = 'Exodiff'
+    input = 'conventional_plane_stress_snospd.i'
+    exodiff = 'conventional_plane_stress_snospd.e'
+    map = false
+  [../]
+  [./weak_plane_stress_snospd]
+    type = 'Exodiff'
+    input = 'weak_plane_stress_snospd.i'
+    exodiff = 'weak_plane_stress_snospd.e'
+    map = false
+  [../]
+[]
