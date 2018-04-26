@@ -1,6 +1,6 @@
 Content:
-    - framework/doc/content
-    - modules/peridynamics/doc/content
+    - ${MOOSE_DIR}/framework/doc/content
+    - ${MOOSE_DIR}/modules/peridynamics/doc/content
 
 Renderer:
     type: MooseDocs.base.MaterializeRenderer
@@ -13,15 +13,14 @@ Extensions:
         type: MooseDocs.extensions.appsyntax
         executable: ${MOOSE_DIR}/modules/peridynamics
         hide:
-            framework: !include framework/doc/hidden.yml
-            phase_field: !include modules/peridynamics/doc/hidden.yml
-        remove: !include framework/doc/remove.yml
+            framework: !include ${MOOSE_DIR}/framework/doc/hidden.yml
+        remove: !include ${MOOSE_DIR}/framework/doc/remove.yml
         includes:
-            - framework/include
-            - modules/peridynamics/include
+            - ${MOOSE_DIR}/framework/include
+            - ${MOOSE_DIR}/modules/peridynamics/include
     globals:
         type: MooseDocs.extensions.panoptic
-        shortcuts: !include framework/doc/globals.yml
+        shortcuts: !include ${MOOSE_DIR}/framework/doc/globals.yml
     acronyms:
         type: MooseDocs.extensions.acronym
-        acronyms: !include framework/doc/acronyms.yml
+        acronyms: !include ${MOOSE_DIR}/framework/doc/acronyms.yml
