@@ -1,13 +1,13 @@
 # InertialForcePD
 
-!syntax description /Kernels/InertialForcePD
+!syntax description /NodalKernels/InertialForcePD
 
 ## Description
 
 The NodalKernel `InertialForcePD` computes the resdiual and jacobian for the inertial force term in the equation of motion.
 
-!syntax parameters /Kernels/InertialForcePD
+!syntax parameters /NodalKernels/InertialForcePD
 
-!syntax inputs /Kernels/InertialForcePD
+!syntax inputs /NodalKernels/InertialForcePD
 
-!syntax children /Kernels/InertialForcePD
+!syntax children /NodalKernels/InertialForcePD

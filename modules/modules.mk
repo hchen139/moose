@@ -11,7 +11,7 @@ ifeq ($(ALL_MODULES),yes)
         LEVEL_SET                   := yes
         MISC                        := yes
         NAVIER_STOKES               := yes
-				PERIDYNAMICS                := yes
+	PERIDYNAMICS                := yes
         PHASE_FIELD                 := yes
         POROUS_FLOW                 := yes
         RDG                         := yes
@@ -128,9 +128,9 @@ ifeq ($(PERIDYNAMICS),yes)
   APPLICATION_DIR    := $(MOOSE_DIR)/modules/peridynamics
   APPLICATION_NAME   := peridynamics
 
-	# Dependency on tensor mechanics
+  # Dependency on tensor mechanics
   DEPEND_MODULES     := tensor_mechanics
-	SUFFIX             := pd
+  SUFFIX             := pdxx
   include $(FRAMEWORK_DIR)/app.mk
 endif
 

@@ -88,7 +88,7 @@ $\textbf{NOTE}$: Definitions of different peridynamic states used in above deriv
 
 ## Peridynamic bond-associated deformation gradient
 
-!media peridynamics/bond_associated_horizon.png style=width:200px;padding-left:20px;float:right;
+!media bond_associated_horizon.png style=width:200px;padding-left:20px;float:right;
        caption=Configuration of bond-associated horizon for deformation gradient approximation
 
 Based on how the peridynamic nodal deformation gradient is constructed in above section, it’s obvious that an optimal peridynamic deformation gradient at a material point cannot accurately reflect the deformation of every bond associated with that material point. As a consequence, the force state calculated from this deformation gradient differs from the actual force state of that bond. This can sometimes lead to severe unphysical issues in peridynamic modeling, such as sub-horizon material collapse and material penetration.

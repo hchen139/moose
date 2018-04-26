@@ -1,1 +1,1 @@
-!syntax complete groups=PeridynamicsApp
+!syntax complete group=Peridynamics

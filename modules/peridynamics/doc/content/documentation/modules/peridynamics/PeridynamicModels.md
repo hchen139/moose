@@ -1,6 +1,6 @@
 # Peridynamic Mechanics Model
 
-!media peridynamics/peridynamic_models.png style=width:200px;padding-left:20px;float:top;
+!media peridynamic_models.png style=width:200px;padding-left:20px;float:top;
        caption=Schematics of bond-based (a), ordinary (b) and non-ordinary (c) state based peridynamic material response
 
 The first peridynamic model, termed the bond-based peridynamic model (BPD), was proposed by Silling in the year of 2000 [citet:Silling2000bond]. In BPD, material points interact in a pair-wise fashion with neighboring material points that fall within their horizon. The interaction between two material points depends only on their own deformations.

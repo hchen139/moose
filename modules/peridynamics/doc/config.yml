@@ -1,5 +1,6 @@
 Content:
     - ${MOOSE_DIR}/framework/doc/content
+    - ${MOOSE_DIR}/modules/tensor_mechanics/doc/content
     - ${MOOSE_DIR}/modules/peridynamics/doc/content
 
 Renderer:
@@ -14,10 +15,12 @@ Extensions:
         executable: ${MOOSE_DIR}/modules/peridynamics
         hide:
             framework: !include ${MOOSE_DIR}/framework/doc/hidden.yml
+            tensor_mechanics: !include modules/tensor_mechanics/doc/hidden.yml
         remove: !include ${MOOSE_DIR}/framework/doc/remove.yml
         includes:
             - ${MOOSE_DIR}/framework/include
             - ${MOOSE_DIR}/modules/peridynamics/include
+            - ${MOOSE_DIR}/modules/tensor_mechanics/include
     globals:
         type: MooseDocs.extensions.panoptic
         shortcuts: !include ${MOOSE_DIR}/framework/doc/globals.yml

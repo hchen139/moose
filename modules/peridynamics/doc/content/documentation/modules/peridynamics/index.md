@@ -1,6 +1,6 @@
 # Peridynamics Module
 
-!media peridynamics/pd_fuel_fracture_examples.png style=width:300px;padding-left:20px;float:right;
+!media pd_fuel_fracture_examples.png style=width:300px;padding-left:20px;float:right;
        caption=Peridynamics results of 3D fuel fragmentation
 
 - [Complete System List](peridynamics/systems.md)
