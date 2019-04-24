@@ -14,7 +14,7 @@
 #include "Assembly.h"
 #include "SystemBase.h"
 
-class MeshBasePD;
+class MooseMeshPD;
 class KernelBasePD;
 
 template <>
@@ -60,7 +60,7 @@ protected:
   const bool _use_full_jacobian;
 
   ///@{ Parameters for peridynamic mesh information
-  MeshBasePD & _pdmesh;
+  MooseMeshPD & _pdmesh;
   const unsigned int _dim;
   const unsigned int _nnodes;
   std::vector<Node *> _nodes_ij;

@@ -7,15 +7,17 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef MESHBASEPD_H
-#define MESHBASEPD_H
+#ifndef MOOSEMESHPD_H
+#define MOOSEMESHPD_H
 
 #include "MooseMesh.h"
 
-class MeshBasePD;
+#include "libmesh/point.h"
+
+class MooseMeshPD;
 
 template <>
-InputParameters validParams<MeshBasePD>();
+InputParameters validParams<MooseMeshPD>();
 
 /**
  * Structure to store data for each peridynamic material point
@@ -33,10 +35,10 @@ struct PD_Node
 /**
  * Base mesh class for peridynamic models
  */
-class MeshBasePD : public MooseMesh
+class MooseMeshPD : public MooseMesh
 {
 public:
-  MeshBasePD(const InputParameters & parameters);
+  MooseMeshPD(const InputParameters & parameters);
 
   virtual unsigned int dimension() const override;
   virtual dof_id_type nNodes() const override;
@@ -178,4 +180,4 @@ protected:
   std::vector<Real> _dg_node_volumesum;
 };
 
-#endif // MESHBASEPD_H
+#endif // MOOSEMESHPD_H

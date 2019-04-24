@@ -8,7 +8,7 @@
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
 #include "InertialForcePD.h"
-#include "MeshBasePD.h"
+#include "MooseMeshPD.h"
 
 registerMooseObject("PeridynamicsApp", InertialForcePD);
 
@@ -29,7 +29,7 @@ validParams<InertialForcePD>()
 
 InertialForcePD::InertialForcePD(const InputParameters & parameters)
   : NodalKernel(parameters),
-    _pdmesh(dynamic_cast<MeshBasePD &>(_mesh)),
+    _pdmesh(dynamic_cast<MooseMeshPD &>(_mesh)),
     _density(getParam<Real>("density")),
     _u_old(valueOld()),
     _vel_old(coupledValueOld("velocity")),

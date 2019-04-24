@@ -11,7 +11,7 @@
 #define INTACTBONDSDIRICHLETBCPD_H
 
 #include "NodalBC.h"
-#include "MeshBasePD.h"
+#include "MooseMeshPD.h"
 
 class IntactBondsDirichletBCPD;
 
@@ -32,7 +32,7 @@ public:
 
 protected:
   /// Peridynamic mesh
-  MeshBasePD & _pdmesh;
+  MooseMeshPD & _pdmesh;
 
   /// Value of the unknown variable this BC is acting on at last time step
   const VariableValue & _u_old;

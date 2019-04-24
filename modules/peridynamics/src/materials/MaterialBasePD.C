@@ -23,7 +23,7 @@ validParams<MaterialBasePD>()
 
 MaterialBasePD::MaterialBasePD(const InputParameters & parameters)
   : Material(parameters),
-    _pdmesh(dynamic_cast<MeshBasePD &>(_mesh)),
+    _pdmesh(dynamic_cast<MooseMeshPD &>(_mesh)),
     _dim(_pdmesh.dimension()),
     _nnodes(2),
     _horizon(_nnodes),

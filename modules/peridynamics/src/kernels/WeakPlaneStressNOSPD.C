@@ -9,8 +9,9 @@
 
 #include "WeakPlaneStressNOSPD.h"
 #include "MooseVariable.h"
-#include "MeshBasePD.h"
+#include "MooseMeshPD.h"
 #include "RankTwoTensor.h"
+#include "RankFourTensor.h"
 
 registerMooseObject("PeridynamicsApp", WeakPlaneStressNOSPD);
 
@@ -44,8 +45,9 @@ WeakPlaneStressNOSPD::computeLocalJacobian()
 {
   for (_i = 0; _i < _test.size(); _i++)
     for (_j = 0; _j < _phi.size(); _j++)
-      _local_ke(_i, _j) += (_i == _j ? 1 : 0) * _Cijkl[_i](2, 2, 2, 2) * _dg_bond_vsum_ij[_i] /
-                           _dg_node_vsum_ij[_i] * _vols_ij[_i] * _bond_status_ij;
+      _local_ke(_i, _j) += (_i == _j ? 1 : 0) * _Jacobian_mult[_i](2, 2, 2, 2) *
+                           _dg_bond_vsum_ij[_i] / _dg_node_vsum_ij[_i] * _vols_ij[_i] *
+                           _bond_status_ij;
 }
 
 void
@@ -57,7 +59,7 @@ WeakPlaneStressNOSPD::computeLocalOffDiagJacobian(unsigned int coupled_component
     std::vector<RankTwoTensor> dSdT(_nnodes);
     for (unsigned int nd = 0; nd < _nnodes; nd++)
       for (unsigned int es = 0; es < _deigenstrain_dT.size(); es++)
-        dSdT[nd] = -_Cijkl[nd] * (*_deigenstrain_dT[es])[nd];
+        dSdT[nd] = -_Jacobian_mult[nd] * (*_deigenstrain_dT[es])[nd];
 
     for (_i = 0; _i < _test.size(); _i++)
       for (_j = 0; _j < _phi.size(); _j++)
@@ -114,7 +116,7 @@ WeakPlaneStressNOSPD::computePDNonlocalOffDiagJacobian(unsigned int jvar_num,
         dFdUk *= _shape[cur_nd].inverse();
 
         RankTwoTensor dPdUk =
-            _Cijkl[cur_nd] * 0.5 *
+            _Jacobian_mult[cur_nd] * 0.5 *
             (dFdUk.transpose() * _dgrad[cur_nd] + _dgrad[cur_nd].transpose() * dFdUk);
 
         // bond status for bond k

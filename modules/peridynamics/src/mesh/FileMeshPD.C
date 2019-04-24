@@ -21,7 +21,7 @@ template <>
 InputParameters
 validParams<FileMeshPD>()
 {
-  InputParameters params = validParams<MeshBasePD>();
+  InputParameters params = validParams<MooseMeshPD>();
   params.addClassDescription("Class for generating peridynamic mesh from finite element mesh");
 
   params.addRequiredParam<MeshFileName>("file", "Name of the mesh file (must be exodusII file)");
@@ -29,9 +29,15 @@ validParams<FileMeshPD>()
   return params;
 }
 
-FileMeshPD::FileMeshPD(const InputParameters & parameters) : MeshBasePD(parameters) {}
+FileMeshPD::FileMeshPD(const InputParameters & parameters)
+  : MooseMeshPD(parameters), _file_name(getParam<MeshFileName>("file"))
+{
+}
 
-FileMeshPD::~FileMeshPD() { delete _fe_mesh; }
+FileMeshPD::FileMeshPD(const FileMeshPD & other_mesh)
+  : MooseMeshPD(other_mesh), _file_name(other_mesh._file_name)
+{
+}
 
 std::unique_ptr<MooseMesh>
 FileMeshPD::safeClone() const
@@ -43,11 +49,10 @@ void
 FileMeshPD::init()
 {
   // read the temporary mesh from Exodus file
-  std::string file_name = getParam<MeshFileName>("file");
-  MooseUtils::checkFileReadable(file_name);
+  MooseUtils::checkFileReadable(_file_name);
   _fe_mesh = new SerialMesh(_communicator);
   ExodusII_IO * exodusII_io = new ExodusII_IO(*_fe_mesh);
-  exodusII_io->read(file_name);
+  exodusII_io->read(_file_name);
   _fe_mesh->allow_renumbering(false);
   _fe_mesh->prepare_for_use(/*true*/);
 
@@ -64,7 +69,9 @@ FileMeshPD::init()
   _dg_nodeinfo.resize(_total_nodes);
   _dg_bond_volumesum.resize(_total_nodes);
   _dg_node_volumesum.resize(_total_nodes);
+  _min_spacing = 1.0e8;
 
+  Real dist = 0.0;
   // loop through all fe elements to generate PD nodes structure
   for (MeshBase::element_iterator it = _fe_mesh->elements_begin(); it != _fe_mesh->elements_end();
        ++it)
@@ -76,22 +83,25 @@ FileMeshPD::init()
     for (unsigned int i = 0; i < fe_elem->n_neighbors(); ++i)
       if (fe_elem->neighbor(i) != NULL)
       {
-        spacing += (fe_elem->centroid() - fe_elem->neighbor(i)->centroid()).norm();
+        dist = (fe_elem->centroid() - fe_elem->neighbor(i)->centroid()).norm();
+        spacing += dist;
         nneighbors += 1;
+        if (dist < _min_spacing)
+          _min_spacing = dist;
       }
     _pdnode[fe_elem->id()].coord = fe_elem->centroid();
     _pdnode[fe_elem->id()].mesh_spacing = spacing / nneighbors;
-    _pdnode[fe_elem->id()].horizon = MeshBasePD::computeHorizon(spacing / nneighbors);
+    _pdnode[fe_elem->id()].horizon = MooseMeshPD::computeHorizon(spacing / nneighbors);
     _pdnode[fe_elem->id()].volume = fe_elem->volume();
     _pdnode[fe_elem->id()].volumesum = 0.0;
     _pdnode[fe_elem->id()].blockID = fe_elem->subdomain_id();
   }
 
   // search node neighbors
-  MeshBasePD::findNodeNeighbor();
+  MooseMeshPD::findNodeNeighbor();
 
   // setup node info for deformation gradient
-  MeshBasePD::setupDGNodeInfo();
+  MooseMeshPD::setupDGNodeInfo();
 
   _total_bonds = 0;
   for (unsigned int i = 0; i < _total_nodes; ++i)
@@ -194,13 +204,13 @@ FileMeshPD::buildMesh()
     Real Y = (_pdnode[i].coord)(1);
     Real Z = (_pdnode[i].coord)(2);
     Real dis = std::sqrt(X * X + Y * Y + Z * Z);
-    if (dis < 0.001)
+    if (dis < 0.001 * _min_spacing)
       pd_boundary_info.add_node(pd_mesh.node_ptr(i), 100);
-    if (std::abs(Y) < 0.001)
+    if (std::abs(Y) < 0.001 * _min_spacing)
       pd_boundary_info.add_node(pd_mesh.node_ptr(i), 101);
-    if (std::abs(X) < 0.001)
+    if (std::abs(X) < 0.001 * _min_spacing)
       pd_boundary_info.add_node(pd_mesh.node_ptr(i), 102);
-    if (std::abs(Z) < 0.001)
+    if (std::abs(Z) < 0.001 * _min_spacing)
       pd_boundary_info.add_node(pd_mesh.node_ptr(i), 103);
     pd_boundary_info.add_node(pd_mesh.node_ptr(i), 999);
   }
@@ -209,11 +219,6 @@ FileMeshPD::buildMesh()
   pd_boundary_info.nodeset_name(102) = "YCenterLine";  // 2D
   pd_boundary_info.nodeset_name(103) = "ZCenterPlane"; // 3D
   pd_boundary_info.nodeset_name(999) = "All";
-
-  _console << "Mesh Information:" << '\n';
-  _console << "  Number of Nodes:         " << _total_nodes << '\n';
-  _console << "  Number of Bonds:         " << _total_bonds << '\n';
-  _console << '\n';
 
   // prepare for use
   pd_mesh.prepare_for_use(/*skip_renumber =*/true);

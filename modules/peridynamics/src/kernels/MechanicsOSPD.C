@@ -8,7 +8,7 @@
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
 #include "MechanicsOSPD.h"
-#include "MeshBasePD.h"
+#include "MooseMeshPD.h"
 
 registerMooseObject("PeridynamicsApp", MechanicsOSPD);
 

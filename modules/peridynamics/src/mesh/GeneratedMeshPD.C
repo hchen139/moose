@@ -19,7 +19,7 @@ template <>
 InputParameters
 validParams<GeneratedMeshPD>()
 {
-  InputParameters params = validParams<MeshBasePD>();
+  InputParameters params = validParams<MooseMeshPD>();
   params.addClassDescription("Class for generating peridynamic mesh using regular grids");
 
   params.addRangeCheckedParam<unsigned int>(
@@ -35,7 +35,7 @@ validParams<GeneratedMeshPD>()
 }
 
 GeneratedMeshPD::GeneratedMeshPD(const InputParameters & parameters)
-  : MeshBasePD(parameters),
+  : MooseMeshPD(parameters),
     _nx(getParam<unsigned int>("nx")),
     _xmin(getParam<Real>("xmin")),
     _ymin(getParam<Real>("ymin")),
@@ -45,6 +45,57 @@ GeneratedMeshPD::GeneratedMeshPD(const InputParameters & parameters)
     _zmax(getParam<Real>("zmax"))
 {
   _dim = getParam<MooseEnum>("dim");
+
+  // All generated meshes are regular orthogonal meshes - until they get modified ;)
+  _regular_orthogonal_mesh = true;
+}
+
+void
+GeneratedMeshPD::prepared(bool state)
+{
+  MooseMesh::prepared(state);
+
+  // Fall back on scanning the mesh for coordinates instead of using input parameters for queries
+  if (!state)
+    _dims_may_have_changed = true;
+}
+
+Real
+GeneratedMeshPD::getMinInDimension(unsigned int component) const
+{
+  if (_dims_may_have_changed)
+    return MooseMesh::getMinInDimension(component);
+
+  switch (component)
+  {
+    case 0:
+      return _xmin;
+    case 1:
+      return _dim > 1 ? _ymin : 0;
+    case 2:
+      return _dim > 2 ? _zmin : 0;
+    default:
+      mooseError("Invalid component");
+  }
+}
+
+Real
+GeneratedMeshPD::getMaxInDimension(unsigned int component) const
+{
+  if (_dims_may_have_changed)
+    return MooseMesh::getMaxInDimension(component);
+
+  switch (component)
+  {
+    case 0:
+      return _xmax;
+    case 1:
+      return _dim > 1 ? _ymax : 0;
+    case 2:
+      return _dim > 2 ? _zmax : 0;
+    default:
+      mooseError("Invalid component");
+  }
 }
 
 std::unique_ptr<MooseMesh>
@@ -78,11 +129,6 @@ GeneratedMeshPD::buildMesh()
   else
     build3DRectangular(mesh, boundary_info); // 3D rectangular domain
 
-  _console << "Mesh Information:" << '\n';
-  _console << "  Number of Nodes:         " << _total_nodes << '\n';
-  _console << "  Number of Bonds:         " << _total_bonds << '\n';
-  _console << '\n';
-
   // prepare for use
   mesh.prepare_for_use(/*skip_renumber =*/true);
 }
@@ -91,7 +137,7 @@ void
 GeneratedMeshPD::init2DRectangular()
 {
   _spacing = (_xmax - _xmin) / _nx;
-  Real horizon = MeshBasePD::computeHorizon(_spacing);
+  Real horizon = MooseMeshPD::computeHorizon(_spacing);
   unsigned int ny = static_cast<int>((_ymax - _ymin) / _spacing);
 
   _total_nodes = 0;
@@ -105,7 +151,7 @@ GeneratedMeshPD::init2DRectangular()
       for (unsigned int n = 0; n < _cracks_start.size(); ++n)
       {
         inside =
-            inside || MeshBasePD::checkInside(
+            inside || MooseMeshPD::checkInside(
                           _cracks_start[n], _cracks_end[n], Point(X, Y, 0.0), _cracks_width[n]);
       }
       if (!inside)
@@ -131,7 +177,7 @@ GeneratedMeshPD::init2DRectangular()
       for (unsigned int n = 0; n < _cracks_start.size(); ++n)
       {
         inside =
-            inside || MeshBasePD::checkInside(
+            inside || MooseMeshPD::checkInside(
                           _cracks_start[n], _cracks_end[n], Point(X, Y, 0.0), _cracks_width[n]);
       }
       if (!inside)
@@ -147,10 +193,10 @@ GeneratedMeshPD::init2DRectangular()
     }
 
   // search node neighbor
-  MeshBasePD::findNodeNeighbor();
+  MooseMeshPD::findNodeNeighbor();
 
   // setup node info for deformation gradient
-  MeshBasePD::setupDGNodeInfo();
+  MooseMeshPD::setupDGNodeInfo();
 
   // find bonds for each node
   _total_bonds = 0;
@@ -174,7 +220,7 @@ void
 GeneratedMeshPD::init3DRectangular()
 {
   _spacing = (_xmax - _xmin) / _nx;
-  Real horizon = MeshBasePD::computeHorizon(_spacing);
+  Real horizon = MooseMeshPD::computeHorizon(_spacing);
   unsigned int ny = static_cast<int>((_ymax - _ymin) / _spacing);
   unsigned int nz = static_cast<int>((_zmax - _zmin) / _spacing);
 
@@ -191,7 +237,7 @@ GeneratedMeshPD::init3DRectangular()
         for (unsigned int n = 0; n < _cracks_start.size(); ++n)
         {
           inside =
-              inside || MeshBasePD::checkInside(
+              inside || MooseMeshPD::checkInside(
                             _cracks_start[n], _cracks_end[n], Point(X, Y, Z), _cracks_width[n]);
         }
         if (!inside)
@@ -219,7 +265,7 @@ GeneratedMeshPD::init3DRectangular()
         for (unsigned int n = 0; n < _cracks_start.size(); ++n)
         {
           inside =
-              inside || MeshBasePD::checkInside(
+              inside || MooseMeshPD::checkInside(
                             _cracks_start[n], _cracks_end[n], Point(X, Y, Z), _cracks_width[n]);
         }
         if (!inside)
@@ -235,10 +281,10 @@ GeneratedMeshPD::init3DRectangular()
       }
 
   // search node neighbor
-  MeshBasePD::findNodeNeighbor();
+  MooseMeshPD::findNodeNeighbor();
 
   // setup node info for deformation gradient
-  MeshBasePD::setupDGNodeInfo();
+  MooseMeshPD::setupDGNodeInfo();
 
   // find bonds for each node
   _total_bonds = 0;

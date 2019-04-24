@@ -13,7 +13,7 @@
 #include "AuxKernelBasePD.h"
 
 class NodalVolumePD;
-class MeshBasePD;
+class MooseMeshPD;
 
 template <>
 InputParameters validParams<NodalVolumePD>();

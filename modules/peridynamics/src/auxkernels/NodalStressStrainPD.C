@@ -8,7 +8,7 @@
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
 #include "NodalStressStrainPD.h"
-#include "MeshBasePD.h"
+#include "MooseMeshPD.h"
 #include "RankTwoScalarTools.h"
 
 registerMooseObject("PeridynamicsApp", NodalStressStrainPD);

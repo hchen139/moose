@@ -11,7 +11,7 @@
 #define MATERIALBASEPD_H
 
 #include "Material.h"
-#include "MeshBasePD.h"
+#include "MooseMeshPD.h"
 
 class MaterialBasePD;
 
@@ -30,7 +30,7 @@ protected:
   virtual void computeProperties() override;
 
   ///@{ Mesh related information for material points of current bond/element
-  MeshBasePD & _pdmesh;
+  MooseMeshPD & _pdmesh;
   const unsigned int _dim;
   const unsigned int _nnodes;
   std::vector<Real> _horizon;

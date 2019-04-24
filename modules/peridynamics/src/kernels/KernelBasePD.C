@@ -8,7 +8,7 @@
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
 #include "KernelBasePD.h"
-#include "MeshBasePD.h"
+#include "MooseMeshPD.h"
 
 template <>
 InputParameters
@@ -30,7 +30,7 @@ KernelBasePD::KernelBasePD(const InputParameters & parameters)
   : Kernel(parameters),
     _bond_status_var(_subproblem.getVariable(_tid, "bond_status")),
     _use_full_jacobian(getParam<bool>("full_jacobian")),
-    _pdmesh(dynamic_cast<MeshBasePD &>(_mesh)),
+    _pdmesh(dynamic_cast<MooseMeshPD &>(_mesh)),
     _dim(_pdmesh.dimension()),
     _nnodes(2) // Edge2 element has only two nodes
 {

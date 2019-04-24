@@ -13,7 +13,6 @@
 #include "NodalAuxVariableUserObjectBasePD.h"
 
 class NodalRankTwoTensorUserObjectBasePD;
-class RankTwoTensor;
 
 template <>
 InputParameters validParams<NodalRankTwoTensorUserObjectBasePD>();

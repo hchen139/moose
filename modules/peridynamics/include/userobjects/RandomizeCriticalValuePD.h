@@ -11,7 +11,7 @@
 #define RANDOMIZECRITICALVALUEPD_H
 
 #include "GeneralUserObject.h"
-#include "MeshBasePD.h"
+#include "MooseMeshPD.h"
 
 class RandomizeCriticalValuePD;
 
@@ -34,7 +34,7 @@ public:
 protected:
   ///@{ Peridynamic mesh information
   MooseMesh & _mesh;
-  MeshBasePD & _pdmesh;
+  MooseMeshPD & _pdmesh;
   ///@}
 
   AuxiliarySystem & _aux;

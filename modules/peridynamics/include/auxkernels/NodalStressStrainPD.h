@@ -15,7 +15,7 @@
 #include "RankFourTensor.h"
 
 class NodalStressStrainPD;
-class MeshBasePD;
+class MooseMeshPD;
 
 template <>
 InputParameters validParams<NodalStressStrainPD>();

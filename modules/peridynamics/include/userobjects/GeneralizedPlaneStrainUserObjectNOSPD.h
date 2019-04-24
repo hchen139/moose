@@ -13,7 +13,6 @@
 #include "GeneralizedPlaneStrainUserObjectBasePD.h"
 
 class GeneralizedPlaneStrainUserObjectNOSPD;
-class RankTwoTensor;
 
 template <>
 InputParameters validParams<GeneralizedPlaneStrainUserObjectNOSPD>();

@@ -7,13 +7,13 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#include "MeshBasePD.h"
+#include "MooseMeshPD.h"
 
 #include "libmesh/utility.h"
 
 template <>
 InputParameters
-validParams<MeshBasePD>()
+validParams<MooseMeshPD>()
 {
   InputParameters params = validParams<MooseMesh>();
   params.addClassDescription("Base class for generating mesh for peridynamic simulation");
@@ -31,7 +31,7 @@ validParams<MeshBasePD>()
   return params;
 }
 
-MeshBasePD::MeshBasePD(const InputParameters & parameters)
+MooseMeshPD::MooseMeshPD(const InputParameters & parameters)
   : MooseMesh(parameters),
     _horizon_radius(isParamValid("horizon_radius") ? getParam<Real>("horizon_radius") : 0),
     _horizon_number(isParamValid("horizon_number") ? getParam<Real>("horizon_number") : 0),
@@ -77,25 +77,25 @@ MeshBasePD::MeshBasePD(const InputParameters & parameters)
 }
 
 unsigned int
-MeshBasePD::dimension() const
+MooseMeshPD::dimension() const
 {
   return _dim;
 }
 
 dof_id_type
-MeshBasePD::nNodes() const
+MooseMeshPD::nNodes() const
 {
   return _total_nodes;
 }
 
 dof_id_type
-MeshBasePD::nElem() const
+MooseMeshPD::nElem() const
 {
   return _total_bonds;
 }
 
 Real
-MeshBasePD::computeHorizon(Real spacing)
+MooseMeshPD::computeHorizon(Real spacing)
 {
   if (isParamValid("horizon_number"))
     return _horizon_number * spacing;
@@ -104,7 +104,7 @@ MeshBasePD::computeHorizon(Real spacing)
 }
 
 void
-MeshBasePD::findNodeNeighbor()
+MooseMeshPD::findNodeNeighbor()
 {
   for (unsigned int i = 0; i < _total_nodes; ++i)
   {
@@ -161,7 +161,7 @@ MeshBasePD::findNodeNeighbor()
 }
 
 void
-MeshBasePD::setupDGNodeInfo()
+MooseMeshPD::setupDGNodeInfo()
 {
   for (unsigned int i = 0; i < _total_nodes; ++i)
   {
@@ -192,13 +192,13 @@ MeshBasePD::setupDGNodeInfo()
 }
 
 std::vector<dof_id_type>
-MeshBasePD::neighbors(dof_id_type node_id)
+MooseMeshPD::neighbors(dof_id_type node_id)
 {
   return _node_neighbors[node_id];
 }
 
 unsigned int
-MeshBasePD::neighborID(dof_id_type node_i, dof_id_type node_j)
+MooseMeshPD::neighborID(dof_id_type node_i, dof_id_type node_j)
 {
   std::vector<dof_id_type> neighbors = _node_neighbors[node_i];
   auto it = std::find(neighbors.begin(), neighbors.end(), node_j);
@@ -212,67 +212,68 @@ MeshBasePD::neighborID(dof_id_type node_i, dof_id_type node_j)
 }
 
 std::vector<dof_id_type>
-MeshBasePD::bonds(dof_id_type node_id)
+MooseMeshPD::bonds(dof_id_type node_id)
 {
   return _node_bonds[node_id];
 }
 
 std::vector<unsigned int>
-MeshBasePD::dgNodeInfo(dof_id_type node_id, unsigned int neighbor_id)
+MooseMeshPD::dgNodeInfo(dof_id_type node_id, unsigned int neighbor_id)
 {
   return _dg_nodeinfo[node_id][neighbor_id];
 }
 
 Point
-MeshBasePD::coord(dof_id_type node_id)
+MooseMeshPD::coord(dof_id_type node_id)
 {
   return _pdnode[node_id].coord;
 }
 
 Real
-MeshBasePD::volume(dof_id_type node_id)
+MooseMeshPD::volume(dof_id_type node_id)
 {
   return _pdnode[node_id].volume;
 }
 
 Real
-MeshBasePD::volumeSum(dof_id_type node_id)
+MooseMeshPD::volumeSum(dof_id_type node_id)
 {
   return _pdnode[node_id].volumesum;
 }
 
 Real
-MeshBasePD::dgBondVolumeSum(dof_id_type node_id, unsigned int neighbor_id)
+MooseMeshPD::dgBondVolumeSum(dof_id_type node_id, unsigned int neighbor_id)
 {
   return _dg_bond_volumesum[node_id][neighbor_id];
 }
 
 Real
-MeshBasePD::dgNodeVolumeSum(dof_id_type node_id)
+MooseMeshPD::dgNodeVolumeSum(dof_id_type node_id)
 {
   return _dg_node_volumesum[node_id];
 }
 
 unsigned int
-MeshBasePD::nneighbors(dof_id_type node_id)
+MooseMeshPD::nneighbors(dof_id_type node_id)
 {
   return _node_neighbors[node_id].size();
 }
 
 Real
-MeshBasePD::mesh_spacing(dof_id_type node_id)
+MooseMeshPD::mesh_spacing(dof_id_type node_id)
 {
   return _pdnode[node_id].mesh_spacing;
 }
 
 Real
-MeshBasePD::horizon(dof_id_type node_id)
+MooseMeshPD::horizon(dof_id_type node_id)
 {
   return _pdnode[node_id].horizon;
 }
 
 bool
-MeshBasePD::checkInside(Point crack_start, Point crack_end, Point point, Real crack_width, Real tol)
+MooseMeshPD::checkInside(
+    Point crack_start, Point crack_end, Point point, Real crack_width, Real tol)
 {
   Real crack_length = (crack_end - crack_start).norm();
   bool inside = crack_length;
@@ -295,7 +296,7 @@ MeshBasePD::checkInside(Point crack_start, Point crack_end, Point point, Real cr
 }
 
 bool
-MeshBasePD::checkCrackIntersection(Point A, Point B, Point C, Point D, Real width)
+MooseMeshPD::checkCrackIntersection(Point A, Point B, Point C, Point D, Real width)
 {
   bool intersect0 = false;
   bool intersect1 = false;
@@ -329,7 +330,7 @@ MeshBasePD::checkCrackIntersection(Point A, Point B, Point C, Point D, Real widt
 }
 
 bool
-MeshBasePD::checkSegmentIntersection(Point A, Point B, Point C, Point D)
+MooseMeshPD::checkSegmentIntersection(Point A, Point B, Point C, Point D)
 {
   // Fail if the segments share an end-point
   if ((A(0) == C(0) && A(1) == C(1)) || (B(0) == C(0) && B(1) == C(1)) ||

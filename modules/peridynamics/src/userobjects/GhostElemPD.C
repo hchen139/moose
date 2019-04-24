@@ -8,7 +8,7 @@
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
 #include "GhostElemPD.h"
-#include "MeshBasePD.h"
+#include "MooseMeshPD.h"
 
 registerMooseObject("PeridynamicsApp", GhostElemPD);
 
@@ -25,7 +25,7 @@ validParams<GhostElemPD>()
 GhostElemPD::GhostElemPD(const InputParameters & parameters)
   : GeneralUserObject(parameters),
     _mesh(_subproblem.mesh()),
-    _pdmesh(dynamic_cast<MeshBasePD &>(_mesh))
+    _pdmesh(dynamic_cast<MooseMeshPD &>(_mesh))
 {
   ghostElements();
 }

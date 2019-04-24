@@ -13,7 +13,7 @@
 #include "AuxKernel.h"
 
 class AuxKernelBasePD;
-class MeshBasePD;
+class MooseMeshPD;
 
 template <>
 InputParameters validParams<AuxKernelBasePD>();
@@ -28,7 +28,7 @@ public:
 
 protected:
   /// Reference to peridynamic mesh object
-  MeshBasePD & _pdmesh;
+  MooseMeshPD & _pdmesh;
 
   /// Problem dimension
   unsigned int _dim;

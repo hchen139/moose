@@ -11,7 +11,7 @@
 #define NODALPOSTPROCESSORBASEPD_H
 
 #include "NodalPostprocessor.h"
-#include "MeshBasePD.h"
+#include "MooseMeshPD.h"
 
 // Forward Declarations
 class NodalPostprocessorBasePD;
@@ -29,7 +29,7 @@ public:
 
 protected:
   /// Reference to peridynamic mesh object
-  MeshBasePD & _pdmesh;
+  MooseMeshPD & _pdmesh;
 
   /// Mesh dimension
   const unsigned int _dim;

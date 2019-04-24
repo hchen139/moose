@@ -8,7 +8,7 @@
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
 #include "AuxiliarySystem.h"
-#include "MeshBasePD.h"
+#include "MooseMeshPD.h"
 #include "MooseVariableFEBase.h"
 #include "MooseRandom.h"
 #include "RandomizeCriticalValuePD.h"
@@ -37,7 +37,7 @@ validParams<RandomizeCriticalValuePD>()
 RandomizeCriticalValuePD::RandomizeCriticalValuePD(const InputParameters & parameters)
   : GeneralUserObject(parameters),
     _mesh(_subproblem.mesh()),
-    _pdmesh(dynamic_cast<MeshBasePD &>(_mesh)),
+    _pdmesh(dynamic_cast<MooseMeshPD &>(_mesh)),
     _aux(_fe_problem.getAuxiliarySystem()),
     _aux_sln(_aux.solution()),
     _mean(getParam<Real>("mean")),
@@ -56,7 +56,7 @@ RandomizeCriticalValuePD::execute()
     dof_id_type elem_i_dof = elem_i->dof_number(_aux.number(), _critical_var->number(), 0);
     Real rand_num = MooseRandom::randNormal(_mean, _standard_deviation);
     if (elem_i->processor_id() == processor_id())
-      _aux_sln.set(elem_i_dof, rand_num);
+      _aux_sln.set(elem_i_dof, std::abs(rand_num));
   }
 }
 

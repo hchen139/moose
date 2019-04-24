@@ -14,7 +14,6 @@
 #include "DerivativeMaterialInterface.h"
 
 class MechanicsBasePD;
-class RankTwoTensor;
 
 template <>
 InputParameters validParams<MechanicsBasePD>();
@@ -51,6 +50,8 @@ protected:
   const bool _temp_coupled;
   MooseVariableFEBase * _temp_var;
   ///@}
+
+  unsigned int _ndisp;
 
   ///@{ Material point based material property for eigen strains
   const std::vector<MaterialPropertyName> _eigenstrain_names;

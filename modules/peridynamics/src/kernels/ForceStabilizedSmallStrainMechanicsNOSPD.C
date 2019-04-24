@@ -8,7 +8,9 @@
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
 #include "ForceStabilizedSmallStrainMechanicsNOSPD.h"
-#include "MeshBasePD.h"
+#include "MooseMeshPD.h"
+#include "RankTwoTensor.h"
+#include "RankFourTensor.h"
 
 registerMooseObject("PeridynamicsApp", ForceStabilizedSmallStrainMechanicsNOSPD);
 

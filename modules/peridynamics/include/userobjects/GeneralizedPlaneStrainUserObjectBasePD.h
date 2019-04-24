@@ -13,7 +13,6 @@
 #include "ElementUserObjectBasePD.h"
 
 class GeneralizedPlaneStrainUserObjectBasePD;
-class RankFourTensor;
 
 template <>
 InputParameters validParams<GeneralizedPlaneStrainUserObjectBasePD>();

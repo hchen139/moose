@@ -8,7 +8,7 @@
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
 #include "NodalDamageIndexPD.h"
-#include "MeshBasePD.h"
+#include "MooseMeshPD.h"
 #include "AuxiliarySystem.h"
 
 registerMooseObject("PeridynamicsApp", NodalDamageIndexPD);

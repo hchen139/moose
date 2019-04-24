@@ -10,7 +10,7 @@
 #ifndef GENERATEDMESHPD_H
 #define GENERATEDMESHPD_H
 
-#include "MeshBasePD.h"
+#include "MooseMeshPD.h"
 
 class GeneratedMeshPD;
 
@@ -20,14 +20,20 @@ InputParameters validParams<GeneratedMeshPD>();
 /**
  * Mesh class for creating regular peridynamic mesh of rectangular domains
  */
-class GeneratedMeshPD : public MeshBasePD
+class GeneratedMeshPD : public MooseMeshPD
 {
 public:
   GeneratedMeshPD(const InputParameters & parameters);
+  GeneratedMeshPD(const GeneratedMeshPD & /* other_mesh */) = default;
 
+  // No copy
+  GeneratedMeshPD & operator=(const GeneratedMeshPD & other_mesh) = delete;
   virtual std::unique_ptr<MooseMesh> safeClone() const override;
   virtual void init() override;
   virtual void buildMesh() override;
+  virtual Real getMinInDimension(unsigned int component) const override;
+  virtual Real getMaxInDimension(unsigned int component) const override;
+  virtual void prepared(bool state) override;
 
   void init2DRectangular();
   void init3DRectangular();
@@ -43,6 +49,9 @@ protected:
 
   /// Nearest neighbor distance
   Real _spacing;
+
+  /// Boolean to indicate that dimensions may have changed
+  bool _dims_may_have_changed;
 };
 
 #endif /* GENERATEDMESHPD_H */

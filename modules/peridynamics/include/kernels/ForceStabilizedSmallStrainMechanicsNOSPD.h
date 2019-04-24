@@ -11,7 +11,6 @@
 #define FORCESTABILIZEDSMALLSTRAINMECHANICSNOSPD_H
 
 #include "MechanicsBasePD.h"
-#include "RankTwoTensor.h"
 
 class ForceStabilizedSmallStrainMechanicsNOSPD;
 

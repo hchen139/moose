@@ -13,7 +13,6 @@
 #include "MechanicsBaseNOSPD.h"
 
 class FiniteStrainMechanicsNOSPD;
-class RankTwoTensor;
 
 template <>
 InputParameters validParams<FiniteStrainMechanicsNOSPD>();

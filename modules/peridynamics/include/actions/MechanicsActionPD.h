@@ -32,7 +32,7 @@ protected:
   virtual InputParameters getKernelParameters(std::string type);
 
   ///@{ Displacement variables
-  std::vector<NonlinearVariableName> _displacements;
+  std::vector<VariableName> _displacements;
   const unsigned int _ndisp;
   ///@}
 

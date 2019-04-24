@@ -11,7 +11,7 @@
 #define ELEMENTUSEROBJECTBASEPD_H
 
 #include "ElementUserObject.h"
-#include "MeshBasePD.h"
+#include "MooseMeshPD.h"
 
 class ElementUserObjectBasePD;
 
@@ -37,7 +37,7 @@ protected:
   NumericVector<Number> & _aux_sln;
 
   /// Peridynamic mesh
-  MeshBasePD & _pdmesh;
+  MooseMeshPD & _pdmesh;
 };
 
 #endif // ELEMENTUSEROBJECTBASEPD_H

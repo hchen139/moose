@@ -13,8 +13,6 @@
 #include "MechanicsBasePD.h"
 
 class MechanicsBaseNOSPD;
-class RankTwoTensor;
-class RankFourTensor;
 
 template <>
 InputParameters validParams<MechanicsBaseNOSPD>();
@@ -41,7 +39,7 @@ protected:
   const MaterialProperty<RankTwoTensor> & _ddgraddu;
   const MaterialProperty<RankTwoTensor> & _ddgraddv;
   const MaterialProperty<RankTwoTensor> & _ddgraddw;
-  const MaterialProperty<RankFourTensor> & _Cijkl;
+  const MaterialProperty<RankFourTensor> & _Jacobian_mult;
   ///@}
 };
 

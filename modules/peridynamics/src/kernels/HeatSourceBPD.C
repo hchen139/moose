@@ -8,7 +8,7 @@
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
 #include "HeatSourceBPD.h"
-#include "MeshBasePD.h"
+#include "MooseMeshPD.h"
 #include "Function.h"
 
 registerMooseObject("PeridynamicsApp", HeatSourceBPD);

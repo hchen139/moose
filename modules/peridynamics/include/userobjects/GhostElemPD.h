@@ -11,7 +11,7 @@
 #define GHOSTELEMPD_H
 
 #include "GeneralUserObject.h"
-#include "MeshBasePD.h"
+#include "MooseMeshPD.h"
 
 class GhostElemPD;
 
@@ -39,7 +39,7 @@ protected:
   void ghostElements();
 
   MooseMesh & _mesh;
-  MeshBasePD & _pdmesh;
+  MooseMeshPD & _pdmesh;
 };
 
 #endif // GHOSTELEMPD_H

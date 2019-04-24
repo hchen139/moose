@@ -13,7 +13,7 @@
 #include "NodalKernel.h"
 
 class InertialForcePD;
-class MeshBasePD;
+class MooseMeshPD;
 
 template <>
 InputParameters validParams<InertialForcePD>();
@@ -32,7 +32,7 @@ protected:
 
 private:
   /// Reference to peridynamic mesh object
-  MeshBasePD & _pdmesh;
+  MooseMeshPD & _pdmesh;
 
   /// Material density
   const Real _density;

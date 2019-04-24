@@ -13,7 +13,6 @@
 #include "MechanicsBasePD.h"
 
 class GeneralizedPlaneStrainOffDiagOSPD;
-class RankFourTensor;
 
 template <>
 InputParameters validParams<GeneralizedPlaneStrainOffDiagOSPD>();

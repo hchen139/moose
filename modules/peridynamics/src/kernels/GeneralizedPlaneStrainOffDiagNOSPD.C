@@ -9,8 +9,9 @@
 
 #include "GeneralizedPlaneStrainOffDiagNOSPD.h"
 #include "MooseVariableScalar.h"
-#include "MeshBasePD.h"
+#include "MooseMeshPD.h"
 #include "RankTwoTensor.h"
+#include "RankFourTensor.h"
 
 registerMooseObject("PeridynamicsApp", GeneralizedPlaneStrainOffDiagNOSPD);
 
@@ -77,7 +78,7 @@ GeneralizedPlaneStrainOffDiagNOSPD::computeDispPartialOffDiagJacobianScalar(unsi
   for (unsigned int nd = 0; nd < _nnodes; ++nd)
     for (unsigned int i = 0; i < 3; ++i)
       for (unsigned int j = 0; j < 3; ++j)
-        dSdE33[nd](i, j) = _Cijkl[nd](i, j, 2, 2);
+        dSdE33[nd](i, j) = _Jacobian_mult[nd](i, j, 2, 2);
 
   for (_i = 0; _i < _test.size(); ++_i)
     for (_j = 0; _j < jv.order(); ++_j)
@@ -110,7 +111,7 @@ GeneralizedPlaneStrainOffDiagNOSPD::computeDispFullOffDiagJacobianScalar(unsigne
   for (unsigned int nd = 0; nd < _nnodes; ++nd)
     for (unsigned int i = 0; i < 3; ++i)
       for (unsigned int j = 0; j < 3; ++j)
-        dSdE33[nd](i, j) = _Cijkl[nd](i, j, 2, 2);
+        dSdE33[nd](i, j) = _Jacobian_mult[nd](i, j, 2, 2);
 
   for (_i = 0; _i < _test.size(); ++_i)
     for (_j = 0; _j < jv.order(); ++_j)
@@ -158,7 +159,7 @@ GeneralizedPlaneStrainOffDiagNOSPD::computeDispFullOffDiagJacobianScalar(unsigne
       dFdUk *= _shape[cur_nd].inverse();
 
       RankTwoTensor dPdUk =
-          _Cijkl[cur_nd] * 0.5 *
+          _Jacobian_mult[cur_nd] * 0.5 *
           (dFdUk.transpose() * _dgrad[cur_nd] + _dgrad[cur_nd].transpose() * dFdUk);
 
       // bond status for bond k
@@ -188,7 +189,7 @@ GeneralizedPlaneStrainOffDiagNOSPD::computeTempOffDiagJacobianScalar(unsigned in
   std::vector<RankTwoTensor> dSdT(_nnodes);
   for (unsigned int nd = 0; nd < _nnodes; ++nd)
     for (unsigned int es = 0; es < _deigenstrain_dT.size(); ++es)
-      dSdT[nd] = -_Cijkl[nd] * (*_deigenstrain_dT[es])[nd];
+      dSdT[nd] = -_Jacobian_mult[nd] * (*_deigenstrain_dT[es])[nd];
 
   kne(0, 0) += dSdT[0](2, 2) * _dg_bond_vsum_ij[0] / _dg_node_vsum_ij[0] * _vols_ij[0] *
                _bond_status_ij; // node i
