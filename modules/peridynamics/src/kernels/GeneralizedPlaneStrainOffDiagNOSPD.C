@@ -9,7 +9,7 @@
 
 #include "GeneralizedPlaneStrainOffDiagNOSPD.h"
 #include "MooseVariableScalar.h"
-#include "MooseMeshPD.h"
+#include "PeridynamicsMesh.h"
 #include "RankTwoTensor.h"
 #include "RankFourTensor.h"
 
@@ -135,20 +135,20 @@ GeneralizedPlaneStrainOffDiagNOSPD::computeDispFullOffDiagJacobianScalar(unsigne
     // NOT including the contribution to nodes i and j, which is considered as local off-diagonal
     std::vector<dof_id_type> ivardofs(_nnodes);
     ivardofs[0] = _nodes_ij[cur_nd]->dof_number(_sys.number(), _var.number(), 0);
-    std::vector<dof_id_type> neighbors = _pdmesh.neighbors(_nodes_ij[cur_nd]->id());
+    std::vector<dof_id_type> neighbors = _pdmesh.getNeighbors(_nodes_ij[cur_nd]->id());
     unsigned int nb = std::find(neighbors.begin(), neighbors.end(), _nodes_ij[1 - cur_nd]->id()) -
                       neighbors.begin();
-    std::vector<unsigned int> dgnodes = _pdmesh.dgNodeInfo(_nodes_ij[cur_nd]->id(), nb);
-    std::vector<dof_id_type> bonds = _pdmesh.bonds(_nodes_ij[cur_nd]->id());
-    for (unsigned int k = 0; k < dgnodes.size(); ++k)
+    std::vector<unsigned int> BAneighbors =
+        _pdmesh.getBondAssocHorizonNeighbors(_nodes_ij[cur_nd]->id(), nb);
+    std::vector<dof_id_type> bonds = _pdmesh.getAssocBonds(_nodes_ij[cur_nd]->id());
+    for (unsigned int k = 0; k < BAneighbors.size(); ++k)
     {
-      Node * node_k = _pdmesh.nodePtr(neighbors[dgnodes[k]]);
+      Node * node_k = _pdmesh.nodePtr(neighbors[BAneighbors[k]]);
       ivardofs[1] = node_k->dof_number(_sys.number(), _var.number(), 0);
-      Real vol_k = _pdmesh.volume(neighbors[dgnodes[k]]);
+      Real vol_k = _pdmesh.getVolume(neighbors[BAneighbors[k]]);
 
       // obtain bond k's origin vector
-      RealGradient origin_vec_ijk =
-          _pdmesh.coord(neighbors[dgnodes[k]]) - _pdmesh.coord(_nodes_ij[cur_nd]->id());
+      RealGradient origin_vec_ijk = *node_k - *_pdmesh.nodePtr(_nodes_ij[cur_nd]->id());
 
       RankTwoTensor dFdUk;
       dFdUk.zero();
@@ -163,7 +163,8 @@ GeneralizedPlaneStrainOffDiagNOSPD::computeDispFullOffDiagJacobianScalar(unsigne
           (dFdUk.transpose() * _dgrad[cur_nd] + _dgrad[cur_nd].transpose() * dFdUk);
 
       // bond status for bond k
-      Real bond_status_ijk = _bond_status_var.getElementalValue(_pdmesh.elemPtr(bonds[dgnodes[k]]));
+      Real bond_status_ijk =
+          _bond_status_var.getElementalValue(_pdmesh.elemPtr(bonds[BAneighbors[k]]));
 
       _local_ke.resize(ken.n(), ken.m());
       _local_ke.zero();

@@ -3,10 +3,22 @@
   displacements = 'disp_x disp_y'
 []
 
+[MeshGenerators]
+  [gmg]
+    type = GeneratedMeshGenerator
+    dim = 2
+    nx = 4
+    ny = 4
+  []
+  [gpd]
+    type = MeshGeneratorPD
+    input = gmg
+    retain_fe_mesh = false
+  []
+[]
+
 [Mesh]
-  type = GeneratedMeshPD
-  dim = 2
-  nx = 8
+  type = PeridynamicsMesh
   horizon_number = 3
 []
 
@@ -19,22 +31,22 @@
 
 [BCs]
   [./left_dx]
-    type = DirichletBC
+    type = PresetBC
     variable = disp_x
-    boundary = 0
+    boundary = left
     value = 0.0
   [../]
   [./left_dy]
-    type = DirichletBC
+    type = PresetBC
     variable = disp_y
-    boundary = 0
+    boundary = left
     value = 0.0
   [../]
   [./right_dx]
-    type = FunctionPresetBC
+    type = PresetBC
     variable = disp_x
-    boundary = 1
-    function = '0.001*t'
+    boundary = right
+    value = 0.001
   [../]
 []
 
@@ -53,7 +65,7 @@
     poissons_ratio = 0.3
   [../]
   [./strain]
-    type = SmallStrainNOSPD
+    type = PlaneSmallStrainNOSPD
   [../]
   [./stress]
     type = ComputeLinearElasticStress
@@ -70,12 +82,13 @@
 [Executioner]
   type = Transient
   solve_type = PJFNK
-  line_search = none
   start_time = 0
   end_time = 1
+  # num_steps = 2
 []
 
 [Outputs]
-  file_base = 2d_non_ordinary_state_small_strain
+  file_base = mesh_restartable_nospd_out
   exodus = true
+  checkpoint = true
 []

@@ -29,7 +29,7 @@ public:
   virtual void act() override;
 
 protected:
-  ///@{ displacement variables
+  ///@{ Displacement variables
   std::vector<VariableName> _displacements;
   const unsigned int _ndisp;
   ///@}
@@ -37,6 +37,7 @@ protected:
   /// Option to choose which peridynamic model to use for generalized plane strain formulation: ordinary state based or non-ordinary state based
   const MooseEnum _formulation;
 
+  /// Scalar variable for out-of-plane strain variable
   VariableName _scalar_out_of_plane_strain;
 };
 #endif // GENERALIZEDPLANESTRAINACTIONPD_H

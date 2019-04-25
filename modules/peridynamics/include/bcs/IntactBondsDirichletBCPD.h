@@ -11,7 +11,7 @@
 #define INTACTBONDSDIRICHLETBCPD_H
 
 #include "NodalBC.h"
-#include "MooseMeshPD.h"
+#include "PeridynamicsMesh.h"
 
 class IntactBondsDirichletBCPD;
 
@@ -20,7 +20,7 @@ InputParameters validParams<IntactBondsDirichletBCPD>();
 
 /**
  * Defines Dirichlet boundary condition based on number of intact bonds associated with each
- * material point.
+ * material point
  */
 class IntactBondsDirichletBCPD : public NodalBC
 {
@@ -32,7 +32,7 @@ public:
 
 protected:
   /// Peridynamic mesh
-  MooseMeshPD & _pdmesh;
+  PeridynamicsMesh & _pdmesh;
 
   /// Value of the unknown variable this BC is acting on at last time step
   const VariableValue & _u_old;

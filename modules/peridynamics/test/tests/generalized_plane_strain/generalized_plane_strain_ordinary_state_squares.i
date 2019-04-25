@@ -2,9 +2,20 @@
   displacements = 'disp_x disp_y'
 []
 
+[MeshGenerators]
+  [fmg]
+    type = FileMeshGenerator
+    file = squares.e
+  []
+  [gpd]
+    type = MeshGeneratorPD
+    input = fmg
+    retain_fe_mesh = false
+  []
+[]
+
 [Mesh]
-  type = FileMeshPD
-  file = squares.e
+  type = PeridynamicsMesh
   horizon_number = 3
 []
 

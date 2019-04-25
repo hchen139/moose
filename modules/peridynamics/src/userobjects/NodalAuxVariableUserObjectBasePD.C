@@ -9,7 +9,7 @@
 
 #include "NodalAuxVariableUserObjectBasePD.h"
 #include "AuxiliarySystem.h"
-#include "MooseMeshPD.h"
+#include "PeridynamicsMesh.h"
 #include "MooseVariable.h"
 
 template <>

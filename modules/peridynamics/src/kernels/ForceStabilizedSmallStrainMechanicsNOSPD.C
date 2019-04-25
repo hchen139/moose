@@ -8,7 +8,7 @@
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
 #include "ForceStabilizedSmallStrainMechanicsNOSPD.h"
-#include "MooseMeshPD.h"
+#include "PeridynamicsMesh.h"
 #include "RankTwoTensor.h"
 #include "RankFourTensor.h"
 
@@ -96,19 +96,16 @@ ForceStabilizedSmallStrainMechanicsNOSPD::computeNonlocalJacobian()
     // calculation of jacobian contribution to current_node's neighbors
     std::vector<dof_id_type> dof(_nnodes);
     dof[0] = _nodes_ij[cur_nd]->dof_number(_sys.number(), _var.number(), 0);
-    std::vector<dof_id_type> neighbors = _pdmesh.neighbors(_nodes_ij[cur_nd]->id());
-    std::vector<dof_id_type> bonds = _pdmesh.bonds(_nodes_ij[cur_nd]->id());
+    std::vector<dof_id_type> neighbors = _pdmesh.getNeighbors(_nodes_ij[cur_nd]->id());
+    std::vector<dof_id_type> bonds = _pdmesh.getAssocBonds(_nodes_ij[cur_nd]->id());
     for (unsigned int k = 0; k < neighbors.size(); ++k)
     {
       Node * node_k = _pdmesh.nodePtr(neighbors[k]);
       dof[1] = node_k->dof_number(_sys.number(), _var.number(), 0);
-      Real vol_k = _pdmesh.volume(neighbors[k]);
+      Real vol_k = _pdmesh.getVolume(neighbors[k]);
 
       // obtain bond ik's origin vector
-      RealGradient origin_vec_ijk(_dim);
-      for (unsigned int j = 0; j < _dim; ++j)
-        origin_vec_ijk(j) =
-            _pdmesh.coord(neighbors[k])(j) - _pdmesh.coord(_nodes_ij[cur_nd]->id())(j);
+      RealGradient origin_vec_ijk = *node_k - *_pdmesh.nodePtr(_nodes_ij[cur_nd]->id());
 
       RankTwoTensor dFdUk;
       dFdUk.zero();
@@ -189,19 +186,16 @@ ForceStabilizedSmallStrainMechanicsNOSPD::computePDNonlocalOffDiagJacobian(
       // calculation of jacobian contribution to current_node's neighbors
       std::vector<dof_id_type> jvardofs_ijk(_nnodes);
       jvardofs_ijk[0] = _nodes_ij[cur_nd]->dof_number(_sys.number(), jvar_num, 0);
-      std::vector<dof_id_type> neighbors = _pdmesh.neighbors(_nodes_ij[cur_nd]->id());
-      std::vector<dof_id_type> bonds = _pdmesh.bonds(_nodes_ij[cur_nd]->id());
+      std::vector<dof_id_type> neighbors = _pdmesh.getNeighbors(_nodes_ij[cur_nd]->id());
+      std::vector<dof_id_type> bonds = _pdmesh.getAssocBonds(_nodes_ij[cur_nd]->id());
       for (unsigned int k = 0; k < neighbors.size(); ++k)
       {
         Node * node_k = _pdmesh.nodePtr(neighbors[k]);
         jvardofs_ijk[1] = node_k->dof_number(_sys.number(), jvar_num, 0);
-        Real vol_k = _pdmesh.volume(neighbors[k]);
+        Real vol_k = _pdmesh.getVolume(neighbors[k]);
 
         // obtain bond k's origin vector
-        RealGradient origin_vec_ijk(_dim);
-        for (unsigned int j = 0; j < _dim; ++j)
-          origin_vec_ijk(j) =
-              _pdmesh.coord(neighbors[k])(j) - _pdmesh.coord(_nodes_ij[cur_nd]->id())(j);
+        RealGradient origin_vec_ijk = *node_k - *_pdmesh.nodePtr(_nodes_ij[cur_nd]->id());
 
         RankTwoTensor dFdUk;
         dFdUk.zero();

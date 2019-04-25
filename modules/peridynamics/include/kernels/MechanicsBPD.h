@@ -36,6 +36,7 @@ protected:
   const MaterialProperty<Real> & _bond_dfdT_ij;
   ///@}
 
+  /// The index of displcement component
   const unsigned int _component;
 };
 

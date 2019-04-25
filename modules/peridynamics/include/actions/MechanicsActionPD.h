@@ -28,8 +28,19 @@ public:
   virtual void act() override;
 
 protected:
-  virtual std::string getKernelType();
-  virtual InputParameters getKernelParameters(std::string type);
+  /**
+   * Function to get the kernel name based on the value of member variables: _formulation and
+   * _stabilization
+   * @return Kernel name
+   */
+  virtual std::string getKernelName();
+
+  /**
+   * Function to get the input parameters for a given kernel name
+   * @param name   the name of the kernel
+   * @return Parameters for the corresponding kernel
+   */
+  virtual InputParameters getKernelParameters(std::string name);
 
   ///@{ Displacement variables
   std::vector<VariableName> _displacements;

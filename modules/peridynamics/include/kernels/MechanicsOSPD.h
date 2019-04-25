@@ -45,6 +45,7 @@ protected:
   const MaterialProperty<Real> & _bond_dfdT_i_j;
   ///@}
 
+  /// The index of displacement component
   const unsigned int _component;
 };
 

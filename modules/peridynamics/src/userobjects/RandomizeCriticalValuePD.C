@@ -8,7 +8,7 @@
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
 #include "AuxiliarySystem.h"
-#include "MooseMeshPD.h"
+#include "PeridynamicsMesh.h"
 #include "MooseVariableFEBase.h"
 #include "MooseRandom.h"
 #include "RandomizeCriticalValuePD.h"
@@ -19,7 +19,7 @@ template <>
 InputParameters
 validParams<RandomizeCriticalValuePD>()
 {
-  InputParameters params = validParams<GeneralUserObject>();
+  InputParameters params = validParams<GeneralUserObjectBasePD>();
   params.addClassDescription(
       "Class for generating randomized value for elemental critical AuxVariable");
 
@@ -35,9 +35,7 @@ validParams<RandomizeCriticalValuePD>()
 }
 
 RandomizeCriticalValuePD::RandomizeCriticalValuePD(const InputParameters & parameters)
-  : GeneralUserObject(parameters),
-    _mesh(_subproblem.mesh()),
-    _pdmesh(dynamic_cast<MooseMeshPD &>(_mesh)),
+  : GeneralUserObjectBasePD(parameters),
     _aux(_fe_problem.getAuxiliarySystem()),
     _aux_sln(_aux.solution()),
     _mean(getParam<Real>("mean")),

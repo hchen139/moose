@@ -62,27 +62,27 @@
     design = 'modules/peridynamics/ForceStabilizedSmallStrainMechanicsNOSPD.md'
     issues = '#11561'
   [../]
-  [./2d_self_stabilized_non_ordinary_state_mechanics]
+  [./2d_non_ordinary_state_mechanics]
     type = 'PetscJacobianTester'
-    input = '2d_self_stabilized_non_ordinary_state.i'
+    input = '2d_non_ordinary_state.i'
     ratio_tol = 1E-7
     difference_tol = 1E10
     requirement = 'SmallStrainMechanicsNOSPD shall provide the accurate residual and jacobian for bond-associated small-strain non-ordinary state-based peridynamic mechanics model.'
     design = 'modules/peridynamics/SmallStrainMechanicsNOSPD.md'
     issues = '#11561'
   [../]
-  [./2d_self_stabilized_non_ordinary_state_thermomechanics]
+  [./2d_non_ordinary_state_thermomechanics]
     type = 'PetscJacobianTester'
-    input = '2d_self_stabilized_non_ordinary_state_coupled.i'
+    input = '2d_non_ordinary_state_coupled.i'
     ratio_tol = 1E-7
     difference_tol = 1E10
     requirement = 'SmallStrainMechanicsNOSPD and HeatConductionBPD shall provide the accurate residual and jacobian for bond-associated small-strain non-ordinary state-based peridynamic thermomechanics model.'
     design = 'modules/peridynamics/SmallStrainMechanicsNOSPD.md'
     issues = '#11561'
   [../]
-  [./3d_self_stabilized_non_ordinary_state_mechanics]
+  [./3d_non_ordinary_state_mechanics]
     type = 'PetscJacobianTester'
-    input = '3d_self_stabilized_non_ordinary_state.i'
+    input = '3d_non_ordinary_state.i'
     ratio_tol = 1E-7
     difference_tol = 1E10
     requirement = 'SmallStrainMechanicsNOSPD shall provide the accurate residual and jacobian for bond-associated small-strain non-ordinary state-based peridynamic mechanics model.'

@@ -8,7 +8,7 @@
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
 #include "BondStatusPD.h"
-#include "MooseMeshPD.h"
+#include "PeridynamicsMesh.h"
 
 registerMooseObject("PeridynamicsApp", BondStatusPD);
 

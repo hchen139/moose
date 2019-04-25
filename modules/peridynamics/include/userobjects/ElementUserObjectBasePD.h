@@ -11,7 +11,7 @@
 #define ELEMENTUSEROBJECTBASEPD_H
 
 #include "ElementUserObject.h"
-#include "MooseMeshPD.h"
+#include "PeridynamicsMesh.h"
 
 class ElementUserObjectBasePD;
 
@@ -30,14 +30,14 @@ protected:
   /// Bond status aux variable
   MooseVariableFEBase & _bond_status_var;
 
-  /// Auxiliary system
+  /// Reference to auxiliary system
   AuxiliarySystem & _aux;
 
   /// Solution vector for aux variables
   NumericVector<Number> & _aux_sln;
 
-  /// Peridynamic mesh
-  MooseMeshPD & _pdmesh;
+  /// Reference to Peridynamic mesh
+  PeridynamicsMesh & _pdmesh;
 };
 
 #endif // ELEMENTUSEROBJECTBASEPD_H

@@ -35,6 +35,7 @@ public:
 protected:
   /**
    * Function to evaluate the given function at each material point
+   * @return The computed nodal value
    */
   virtual Real computeNodalValue() = 0;
 

@@ -32,7 +32,7 @@ public:
 protected:
   virtual Real computeValue() override;
 
-  /// Enum class used to control which failure criterion to use
+  /// Enum class used to determine which failure criterion to use
   enum class FailureCriterion
   {
     CriticalStretch,

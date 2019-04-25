@@ -23,7 +23,7 @@ validParams<MaterialBasePD>()
 
 MaterialBasePD::MaterialBasePD(const InputParameters & parameters)
   : Material(parameters),
-    _pdmesh(dynamic_cast<MooseMeshPD &>(_mesh)),
+    _pdmesh(dynamic_cast<PeridynamicsMesh &>(_mesh)),
     _dim(_pdmesh.dimension()),
     _nnodes(2),
     _horizon(_nnodes),
@@ -41,9 +41,9 @@ MaterialBasePD::computeProperties()
 
   for (_qp = 0; _qp < _qrule->n_points(); ++_qp)
   {
-    _horizon[_qp] = _pdmesh.horizon(_current_elem->get_node(_qp)->id());
-    _nv[_qp] = _pdmesh.volume(_current_elem->get_node(_qp)->id());
-    _nvsum[_qp] = _pdmesh.volumeSum(_current_elem->get_node(_qp)->id());
+    _horizon[_qp] = _pdmesh.getHorizon(_current_elem->get_node(_qp)->id());
+    _nv[_qp] = _pdmesh.getVolume(_current_elem->get_node(_qp)->id());
+    _nvsum[_qp] = _pdmesh.getHorizonVolume(_current_elem->get_node(_qp)->id());
   }
 
   _origin_vec = *_current_elem->get_node(1) - *_current_elem->get_node(0);

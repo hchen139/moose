@@ -29,7 +29,7 @@ public:
 protected:
   Real computeValue() override;
 
-  /// bond_status variable
+  /// Variable for bond status
   const MooseVariableFEBase & _bond_status_var;
 
   /// Stress material property

@@ -43,25 +43,24 @@ ForceStabilizedSmallStrainNOSPD::computeQpDeformationGradient()
     _shape_tensor[_qp](2, 2) = _deformation_gradient[_qp](2, 2) = 1.0;
 
   Node * current_node = _current_elem->get_node(_qp);
-  std::vector<dof_id_type> neighbors = _pdmesh.neighbors(current_node->id());
-  std::vector<dof_id_type> bonds = _pdmesh.bonds(current_node->id());
+  std::vector<dof_id_type> neighbors = _pdmesh.getNeighbors(current_node->id());
+  std::vector<dof_id_type> bonds = _pdmesh.getAssocBonds(current_node->id());
 
   // calculate the shape tensor and prepare the deformation gradient tensor
-  RealGradient origin_vec(3), current_vec(3);
-  origin_vec = 0.0;
-  current_vec = 0.0;
+  RealGradient origin_vec(_dim);
+  RealGradient current_vec(_dim);
 
   for (unsigned int j = 0; j < neighbors.size(); ++j)
     if (_bond_status_var.getElementalValue(_pdmesh.elemPtr(bonds[j])) > 0.5)
     {
       Node * node_j = _pdmesh.nodePtr(neighbors[j]);
-      Real vol_j = _pdmesh.volume(neighbors[j]);
+      Real vol_j = _pdmesh.getVolume(neighbors[j]);
+      origin_vec = *node_j - *_pdmesh.nodePtr(current_node->id());
+
       for (unsigned int k = 0; k < _dim; ++k)
-      {
-        origin_vec(k) = _pdmesh.coord(neighbors[j])(k) - _pdmesh.coord(current_node->id())(k);
         current_vec(k) = origin_vec(k) + _disp_var[k]->getNodalValue(*node_j) -
                          _disp_var[k]->getNodalValue(*current_node);
-      }
+
       Real origin_length = origin_vec.norm();
       for (unsigned int k = 0; k < _dim; ++k)
       {
@@ -87,7 +86,7 @@ ForceStabilizedSmallStrainNOSPD::computeQpDeformationGradient()
   _ddgraddw[_qp] *= _shape_tensor[_qp].inverse();
 
   Real youngs_modulus = ElasticityTensorTools::getIsotropicYoungsModulus(_Cijkl[_qp]);
-  _sf_coeff[_qp] = youngs_modulus * _pdmesh.mesh_spacing(_current_elem->get_node(_qp)->id()) *
+  _sf_coeff[_qp] = youngs_modulus * _pdmesh.getMeshSpacing(_current_elem->get_node(_qp)->id()) *
                    _horizon[_qp] / _origin_length;
   _multi[_qp] = _horizon[_qp] / _origin_length * _nv[0] * _nv[1];
 }

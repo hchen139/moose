@@ -10,8 +10,8 @@
 #ifndef GHOSTELEMPD_H
 #define GHOSTELEMPD_H
 
-#include "GeneralUserObject.h"
-#include "MooseMeshPD.h"
+#include "GeneralUserObjectBasePD.h"
+#include "PeridynamicsMesh.h"
 
 class GhostElemPD;
 
@@ -22,7 +22,7 @@ InputParameters validParams<GhostElemPD>();
  * Userobject class to ghost the required element for calculation on current processor from other
  * processors
  */
-class GhostElemPD : public GeneralUserObject
+class GhostElemPD : public GeneralUserObjectBasePD
 {
 public:
   GhostElemPD(const InputParameters & parameters);
@@ -37,9 +37,6 @@ protected:
    * Function to ghost/copy element information from other processors
    */
   void ghostElements();
-
-  MooseMesh & _mesh;
-  MooseMeshPD & _pdmesh;
 };
 
 #endif // GHOSTELEMPD_H

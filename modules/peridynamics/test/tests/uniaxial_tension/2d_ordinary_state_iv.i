@@ -1,5 +1,5 @@
 # Test for ordinary state-based peridynamic formulation
-# for regular grid from generated mesh with const bond constants
+# for irregular grid from file mesh with varying bond constants
 # partial Jacobian
 # Jacobian from bond-based formulation is used for preconditioning
 
@@ -10,10 +10,20 @@
   displacements = 'disp_x disp_y'
 []
 
+[MeshGenerators]
+  [fmg]
+    type = FileMeshGenerator
+    file = square.e
+  []
+  [gpd]
+    type = MeshGeneratorPD
+    input = fmg
+    retain_fe_mesh = false
+  []
+[]
+
 [Mesh]
-  type = GeneratedMeshPD
-  dim = 2
-  nx = 4
+  type = PeridynamicsMesh
   horizon_number = 3
 []
 
@@ -28,13 +38,13 @@
   [./left_dx]
     type = DirichletBC
     variable = disp_x
-    boundary = 0
+    boundary = 1
     value = 0.0
   [../]
   [./top_dy]
     type = DirichletBC
     variable = disp_y
-    boundary = 3
+    boundary = 4
     value = 0.0
   [../]
   [./bottom_dy]
@@ -55,7 +65,7 @@
 
 [Materials]
   [./linelast]
-    type = SmallStrainConstantHorizonOSPD
+    type = SmallStrainVariableHorizonOSPD
     youngs_modulus = 2e5
     poissons_ratio = 0.0
   [../]
@@ -77,6 +87,6 @@
 []
 
 [Outputs]
-  file_base = 2d_ordinary_state_rc
+  file_base = 2d_ordinary_state_iv
   exodus = true
 []

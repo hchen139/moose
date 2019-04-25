@@ -43,17 +43,17 @@ GeneralizedPlaneStrainUserObjectOSPD::execute()
   dof_id_type node_j = _current_elem->get_node(1)->id();
 
   // coordinates for node i and j
-  Point coord_i = _pdmesh.coord(node_i);
-  Point coord_j = _pdmesh.coord(node_j);
+  Point coord_i = *_pdmesh.nodePtr(node_i);
+  Point coord_j = *_pdmesh.nodePtr(node_j);
 
   // nodal area for node i and j
-  Real nv_i = _pdmesh.volume(node_i);
-  Real nv_j = _pdmesh.volume(node_j);
+  Real nv_i = _pdmesh.getVolume(node_i);
+  Real nv_j = _pdmesh.getVolume(node_j);
 
   // number of neighbors for node i and j, used to avoid repeated accounting nodal stress in
   // element-wise loop
-  unsigned int nn_i = _pdmesh.neighbors(node_i).size();
-  unsigned int nn_j = _pdmesh.neighbors(node_j).size();
+  unsigned int nn_i = _pdmesh.getNeighbors(node_i).size();
+  unsigned int nn_j = _pdmesh.getNeighbors(node_j).size();
 
   // residual
   _residual += (_out_of_plane_stress_var.getNodalValue(*_current_elem->get_node(0)) -

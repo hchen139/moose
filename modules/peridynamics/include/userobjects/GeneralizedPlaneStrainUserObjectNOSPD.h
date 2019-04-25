@@ -30,6 +30,7 @@ public:
   virtual void execute() override;
 
 protected:
+  /// Materials property stress
   const MaterialProperty<RankTwoTensor> & _stress;
 };
 

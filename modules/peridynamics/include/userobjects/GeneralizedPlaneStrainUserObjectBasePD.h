@@ -32,11 +32,13 @@ public:
 
   /**
    * Function to return the computed residual
+   * @return The computed residual
    */
   Real returnResidual() const;
 
   /**
    * Function to return the computed diagonal Jacobian
+   * @return The computed Jacobian
    */
   Real returnJacobian() const;
 

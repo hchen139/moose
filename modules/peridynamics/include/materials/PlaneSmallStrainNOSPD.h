@@ -33,6 +33,7 @@ protected:
   /**
    * Function to compute out-of-plane component of strain tensor for generalized plane strain and
    * weak plane stress
+   * @return The value of out-of-plane strain
    */
   Real computeOutOfPlaneStrain();
 

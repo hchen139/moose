@@ -28,9 +28,6 @@ public:
   ForceStabilizedSmallStrainNOSPD(const InputParameters & parameters);
 
 protected:
-  /**
-   * Function to compute the conventional deformation gradient
-   */
   virtual void computeQpDeformationGradient() override;
 
   /// Elasticity tensor

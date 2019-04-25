@@ -15,7 +15,7 @@
 #include "RankFourTensor.h"
 
 class NodalStressStrainPD;
-class MooseMeshPD;
+class PeridynamicsMesh;
 
 template <>
 InputParameters validParams<NodalStressStrainPD>();
@@ -32,8 +32,22 @@ public:
 protected:
   Real computeValue() override;
 
+  /**
+   * Function to compute the total strain tensor at each discrete material point
+   * @return The calculated total strain tensor
+   */
   virtual RankTwoTensor computeNodalTotalStrain();
+
+  /**
+   * Function to compute the elastic strain tensor at each discrete material point
+   * @return The calculated elastic strain tensor
+   */
   virtual RankTwoTensor computeNodalElasticStrain();
+
+  /**
+   * Function to compute the stress tensor at each discrete materials point
+   * @return The calculated stress tensor
+   */
   virtual RankTwoTensor computeNodalStress();
 
   /// coupled temperature variable

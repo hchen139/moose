@@ -37,6 +37,9 @@ protected:
 
   /**
    * Function to compute derivative of stress with respect to displacements
+   * @param component   The index of displacement component
+   * @param nd   The local index of element node (either 1 or 2 for Edge2 element)
+   * @return The calculated derivative
    */
   RankTwoTensor computeDSDU(unsigned int component, unsigned int nd);
 
@@ -54,6 +57,7 @@ protected:
   /// Bond based material property for fictitious stabilization force
   const MaterialProperty<Real> & _sf_coeff;
 
+  /// The index of displacement component
   const unsigned int _component;
 };
 

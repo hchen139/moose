@@ -33,20 +33,26 @@ protected:
   /**
    * Function to compute the full off diagonal jacobian for coupling between displacements and
    * scalar variable
+   * @param component   The index of displacement component
+   * @param jvar_num   The coupled scalar variable number
    */
   void computeDispFullOffDiagJacobianScalar(unsigned int component, unsigned int jvar_num);
 
   /**
    * Function to compute partial off diagonal jacobian for coupling between displacements and scalar
    * variable
+   * @param component   The index of displacement component
+   * @param jvar_num   The coupled scalar variable number
    */
   void computeDispPartialOffDiagJacobianScalar(unsigned int component, unsigned int jvar_num);
 
   /**
    * Function to compute off disgonal jacobian for coupling between temperature and scalar variable
+   * @param jvar_num   The coupled scalar variable number
    */
   void computeTempOffDiagJacobianScalar(unsigned int jvar_num);
 
+  /// The variable number of the scalar out-of-plane strain variable
   const unsigned int _scalar_out_of_plane_strain_var_num;
 };
 

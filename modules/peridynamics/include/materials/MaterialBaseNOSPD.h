@@ -33,9 +33,13 @@ protected:
   virtual void computeBondStretch() override;
 
   /**
-   * Function to compute the bond-associated deformation gradient
+   * Function to compute bond-associated deformation gradient
    */
   virtual void computeQpDeformationGradient();
+
+  /**
+   * Function to compute strain tensors
+   */
   virtual void computeQpStrain() = 0;
 
   ///@{ Material properties to store

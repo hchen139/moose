@@ -35,6 +35,7 @@ protected:
   virtual void computePDNonlocalOffDiagJacobian(unsigned int jvar_num,
                                                 unsigned int coupled_component) override;
 
+  /// The index of displacement component
   const unsigned int _component;
 };
 

@@ -1,23 +1,33 @@
 # Test for Jacobian correctness check of non-ordinary state-based peridynamic formulation for mechanics problem
 
 [GlobalParams]
-  displacements = 'disp_x disp_y disp_z'
+  displacements = 'disp_x disp_y'
   full_jacobian = true
 []
 
+[MeshGenerators]
+  [gmg]
+    type = GeneratedMeshGenerator
+    dim = 2
+    nx = 4
+    ny = 4
+  []
+  [gpd]
+    type = MeshGeneratorPD
+    input = gmg
+    retain_fe_mesh = false
+  []
+[]
+
 [Mesh]
-  type = GeneratedMeshPD
-  dim = 3
-  horizon_number = 2
-  nx = 3
+  type = PeridynamicsMesh
+  horizon_number = 3
 []
 
 [Variables]
   [./disp_x]
   [../]
   [./disp_y]
-  [../]
-  [./disp_z]
   [../]
 []
 
@@ -30,13 +40,13 @@
 []
 
 [Materials]
-  [./elasticity_tensor]
+  [./elastic_tensor]
     type = ComputeIsotropicElasticityTensor
     youngs_modulus = 2e5
     poissons_ratio = 0.0
   [../]
   [./strain]
-    type = SmallStrainNOSPD
+    type = PlaneSmallStrainNOSPD
   [../]
   [./stress]
     type = ComputeLinearElasticStress

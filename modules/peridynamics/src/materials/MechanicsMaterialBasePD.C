@@ -38,7 +38,7 @@ MechanicsMaterialBasePD::MechanicsMaterialBasePD(const InputParameters & paramet
   if (_dim != nl_vnames.size())
     mooseError("Size of displacements vector is different from the mesh dimension!");
 
-  for (unsigned int i = 0; i < _dim; ++i)
+  for (unsigned int i = 0; i < nl_vnames.size(); ++i)
     _disp_var.push_back(&_subproblem.getVariable(_tid, nl_vnames[i]));
 }
 

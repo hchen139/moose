@@ -8,7 +8,7 @@
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
 #include "KernelBasePD.h"
-#include "MooseMeshPD.h"
+#include "PeridynamicsMesh.h"
 
 template <>
 InputParameters
@@ -30,7 +30,7 @@ KernelBasePD::KernelBasePD(const InputParameters & parameters)
   : Kernel(parameters),
     _bond_status_var(_subproblem.getVariable(_tid, "bond_status")),
     _use_full_jacobian(getParam<bool>("full_jacobian")),
-    _pdmesh(dynamic_cast<MooseMeshPD &>(_mesh)),
+    _pdmesh(dynamic_cast<PeridynamicsMesh &>(_mesh)),
     _dim(_pdmesh.dimension()),
     _nnodes(2) // Edge2 element has only two nodes
 {
@@ -48,12 +48,12 @@ KernelBasePD::prepare()
   for (unsigned int nd = 0; nd < _nnodes; ++nd)
   {
     _nodes_ij[nd] = _current_elem->get_node(nd);
-    _vols_ij[nd] = _pdmesh.volume(_nodes_ij[nd]->id());
+    _vols_ij[nd] = _pdmesh.getVolume(_nodes_ij[nd]->id());
     unsigned int id_ji_in_ij =
-        _pdmesh.neighborID(_nodes_ij[nd]->id(), _current_elem->get_node(1 - nd)->id());
-    _dg_bond_vsum_ij[nd] = _pdmesh.dgBondVolumeSum(_nodes_ij[nd]->id(), id_ji_in_ij);
-    _dg_node_vsum_ij[nd] = _pdmesh.dgNodeVolumeSum(_nodes_ij[nd]->id());
-    _horizons_ij[nd] = _pdmesh.horizon(_nodes_ij[nd]->id());
+        _pdmesh.getNeighborID(_nodes_ij[nd]->id(), _current_elem->get_node(1 - nd)->id());
+    _dg_bond_vsum_ij[nd] = _pdmesh.getBondAssocHorizonVolume(_nodes_ij[nd]->id(), id_ji_in_ij);
+    _dg_node_vsum_ij[nd] = _pdmesh.getBondAssocHorizonVolumeSum(_nodes_ij[nd]->id());
+    _horizons_ij[nd] = _pdmesh.getHorizon(_nodes_ij[nd]->id());
   }
 
   _origin_vec_ij = *_nodes_ij[1] - *_nodes_ij[0];
