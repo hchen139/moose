@@ -43,8 +43,8 @@ GhostElemPD::ghostElements()
        elem != end_elem;
        ++elem)
     for (unsigned int i = 0; i < 2; ++i)
-      for (unsigned int j = 0; j < _pdmesh.getNNeighbors((*elem)->get_node(i)->id()); ++j)
-        _subproblem.addGhostedElem(_pdmesh.getAssocBonds((*elem)->get_node(i)->id())[j]);
+      for (unsigned int j = 0; j < _pdmesh.getNNeighbors((*elem)->node_id(i)); ++j)
+        _subproblem.addGhostedElem(_pdmesh.getAssocBonds((*elem)->node_id(i))[j]);
 
   //  // scheme 2: loop through only the local nodes and ghost their neighbors and their neighbors' neighbor to current processor
   //  //  this is currently NOT working !!!

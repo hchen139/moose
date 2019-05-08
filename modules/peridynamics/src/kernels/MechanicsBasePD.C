@@ -69,11 +69,11 @@ MechanicsBasePD::prepare()
   _ivardofs_ij.resize(_nnodes);
 
   for (unsigned int i = 0; i < _nnodes; ++i)
-    _ivardofs_ij[i] = _nodes_ij[i]->dof_number(_sys.number(), _var.number(), 0);
+    _ivardofs_ij[i] = _current_elem->node_ptr(i)->dof_number(_sys.number(), _var.number(), 0);
 
   for (unsigned int i = 0; i < _dim; ++i)
-    _cur_ori_ij(i) = _origin_vec_ij(i) + _disp_var[i]->getNodalValue(*_nodes_ij[1]) -
-                     _disp_var[i]->getNodalValue(*_nodes_ij[0]);
+    _cur_ori_ij(i) = _origin_vec_ij(i) + _disp_var[i]->getNodalValue(*_current_elem->node_ptr(1)) -
+                     _disp_var[i]->getNodalValue(*_current_elem->node_ptr(0));
 
   _cur_len_ij = _cur_ori_ij.norm();
   _cur_ori_ij /= _cur_len_ij;

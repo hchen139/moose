@@ -36,8 +36,8 @@ void
 GeneralizedPlaneStrainUserObjectNOSPD::execute()
 {
   // dof_id_type for node i and j
-  dof_id_type node_i = _current_elem->get_node(0)->id();
-  dof_id_type node_j = _current_elem->get_node(1)->id();
+  dof_id_type node_i = _current_elem->node_id(0);
+  dof_id_type node_j = _current_elem->node_id(1);
 
   // coordinates for node i and j
   Point coord_i = *_pdmesh.nodePtr(node_i);

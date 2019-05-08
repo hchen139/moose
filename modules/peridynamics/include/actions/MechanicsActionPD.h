@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef MECHANICSACTIONPD_H
-#define MECHANICSACTIONPD_H
+#pragma once
 
 #include "Action.h"
 
@@ -61,5 +60,3 @@ protected:
   std::vector<AuxVariableName> _diag_save_in;
   ///@}
 };
-
-#endif // MECHANICSACTIONPD_H

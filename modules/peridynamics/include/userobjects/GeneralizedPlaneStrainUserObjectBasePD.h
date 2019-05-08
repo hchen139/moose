@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef GENERALIZEDPLANESTRAINUSEROBJECTBASEPD_H
-#define GENERALIZEDPLANESTRAINUSEROBJECTBASEPD_H
+#pragma once
 
 #include "ElementUserObjectBasePD.h"
 
@@ -57,5 +56,3 @@ protected:
   /// Jacobian parameter
   Real _jacobian;
 };
-
-#endif // GENERALIZEDPLANESTRAINUSEROBJECTBASEPD_H

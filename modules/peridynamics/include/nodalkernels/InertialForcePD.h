@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef INERTIALFORCEPD_H
-#define INERTIALFORCEPD_H
+#pragma once
 
 #include "NodalKernel.h"
 
@@ -48,5 +47,3 @@ private:
   /// Parameter beta for Newmark time integration scheme
   const Real _beta;
 };
-
-#endif // INERTIALFORCEPD_H

@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef RANDOMIZECRITICALVALUEPD_H
-#define RANDOMIZECRITICALVALUEPD_H
+#pragma once
 
 #include "GeneralUserObjectBasePD.h"
 #include "PeridynamicsMesh.h"
@@ -46,5 +45,3 @@ protected:
   /// Critical elemental aux variable
   MooseVariableFEBase * _critical_var;
 };
-
-#endif // RANDOMIZECRITICALVALUEPD_H

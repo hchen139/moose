@@ -24,6 +24,9 @@ validParams<PeridynamicsMesh>()
   params.addParam<Real>("horizon_number",
                         "The material points spacing number, i.e. ratio of horizon radius to the "
                         "effective mesh spacing");
+  params.addParam<Real>("ratio_of_horizons",
+                        "Ratio of bond-associated horizon to nodal horizon. This is the only "
+                        "parameters to control the size of bond-associated horizon.");
   params.addParam<std::vector<Point>>("cracks_start",
                                       "Cartesian coordinates where predefined line cracks start");
   params.addParam<std::vector<Point>>("cracks_end",
@@ -38,6 +41,7 @@ PeridynamicsMesh::PeridynamicsMesh(const InputParameters & parameters)
     _horizon_radius(isParamValid("horizon_radius") ? getParam<Real>("horizon_radius") : 0),
     _has_horizon_number(isParamValid("horizon_number")),
     _horizon_number(_has_horizon_number ? getParam<Real>("horizon_number") : 0),
+    _horizons_ratio(isParamValid("ratio_of_horizons") ? getParam<Real>("ratio_of_horizons") : 1.5),
     _has_cracks(isParamValid("cracks_start") || isParamValid("cracks_end")),
     _dim(declareRestartableData<unsigned int>("dim")),
     _total_nodes(declareRestartableData<unsigned int>("total_nodes")),
@@ -95,11 +99,7 @@ PeridynamicsMesh::PeridynamicsMesh(const InputParameters & parameters)
     _cracks_width.push_back(0);
 }
 
-PeridynamicsMesh::~PeridynamicsMesh()
-{
-  _node_coord.clear();
-  _bah_neighbors.clear();
-}
+PeridynamicsMesh::~PeridynamicsMesh() { _node_coord.clear(); }
 
 std::unique_ptr<MooseMesh>
 PeridynamicsMesh::safeClone() const
@@ -146,7 +146,6 @@ PeridynamicsMesh::createExtraPeridynamicsMeshData(MeshBase & fe_mesh)
   _node_horizon_vol.resize(_total_nodes);
   _node_blockID.resize(_total_nodes);
   _horizon_neighbors.resize(_total_nodes);
-  _bah_neighbors.resize(_total_nodes);
   _node_associated_bonds.resize(_total_nodes);
   _bah_dgneighbors.resize(_total_nodes);
   _bah_vol.resize(_total_nodes);
@@ -161,9 +160,9 @@ PeridynamicsMesh::createExtraPeridynamicsMeshData(MeshBase & fe_mesh)
     unsigned int nneighbors = 0;
     Real dist_sum = 0.0;
     for (unsigned int i = 0; i < fe_elem->n_neighbors(); ++i)
-      if (fe_elem->neighbor(i) != NULL)
+      if (fe_elem->neighbor_ptr(i) != NULL)
       {
-        dist = (fe_elem->centroid() - fe_elem->neighbor(i)->centroid()).norm();
+        dist = (fe_elem->centroid() - fe_elem->neighbor_ptr(i)->centroid()).norm();
         dist_sum += dist;
         nneighbors += 1;
       }
@@ -249,9 +248,6 @@ PeridynamicsMesh::createNodeHorizonBasedData()
           }
         }
       }
-      // neighbors based on the bond-associated horizon
-      if (_node_blockID[i] == _node_blockID[j] && dis <= 1.5 * _node_horizon[i] && j != i)
-        _bah_neighbors[i].push_back(j);
     }
   }
 }
@@ -268,19 +264,15 @@ PeridynamicsMesh::createBondAssocHorizonBasedData()
     for (unsigned int j = 0; j < neighbors.size(); ++j)
     {
       _bah_vol[i][j] = 0.0;
-      // add the particle pair itself
-      _bah_dgneighbors[i][j].push_back(j);
-      std::vector<dof_id_type> j_bah_neighbors = _bah_neighbors[neighbors[j]];
-      for (unsigned int k = 0; k < j_bah_neighbors.size(); ++k)
+      for (unsigned int k = 0; k < neighbors.size(); ++k)
       {
-        auto it = std::find(neighbors.begin(), neighbors.end(), j_bah_neighbors[k]);
-        if (it != neighbors.end() && i != j_bah_neighbors[k])
+        if ((_node_coord[neighbors[j]] - _node_coord[neighbors[k]]).norm() <=
+            _horizons_ratio * _node_horizon[i])
         {
-          // only save the corresponding index in neighbor list, rather than the node id
-          unsigned int pos = it - neighbors.begin();
-          _bah_dgneighbors[i][j].push_back(pos);
-          _bah_vol[i][j] += _node_vol[j_bah_neighbors[k]];
-          _bah_vol_sum[i] += _node_vol[j_bah_neighbors[k]];
+          // only save the corresponding index in neighbor list, rather than the actual node id
+          _bah_dgneighbors[i][j].push_back(k);
+          _bah_vol[i][j] += _node_vol[neighbors[k]];
+          _bah_vol_sum[i] += _node_vol[neighbors[k]];
         }
       }
     }

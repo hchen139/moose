@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef BONDSTATUSPD_H
-#define BONDSTATUSPD_H
+#pragma once
 
 #include "AuxKernelBasePD.h"
 #include "RankTwoTensor.h"
@@ -54,5 +53,3 @@ protected:
   /// Material property containing the stress
   const MaterialProperty<RankTwoTensor> * _stress;
 };
-
-#endif // BONDSTATUSPD_H

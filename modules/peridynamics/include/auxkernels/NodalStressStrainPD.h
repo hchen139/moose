@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef NODALSTRESSSTRAINPD_H
-#define NODALSTRESSSTRAINPD_H
+#pragma once
 
 #include "AuxKernelBasePD.h"
 #include "RankTwoTensor.h"
@@ -90,5 +89,3 @@ protected:
   /// Rank four elasticity tensor
   RankFourTensor _Cijkl;
 };
-
-#endif // NODALSTRESSSTRAINPD_H

@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef MATERIALBASENOSPD_H
-#define MATERIALBASENOSPD_H
+#pragma once
 
 #include "DerivativeMaterialInterface.h"
 #include "MechanicsMaterialBasePD.h"
@@ -59,5 +58,3 @@ protected:
   MaterialProperty<Real> & _multi;
   ///@}
 };
-
-#endif // MATERIALBASENOSPD_H

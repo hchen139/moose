@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef MATERIALBASEPD_H
-#define MATERIALBASEPD_H
+#pragma once
 
 #include "Material.h"
 #include "PeridynamicsMesh.h"
@@ -41,5 +40,3 @@ protected:
   Real _origin_length;
   ///@}
 };
-
-#endif // MATERIALBASEPD_H

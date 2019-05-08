@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef NODALRANKTWOTENSORUSEROBJECTBASEPD_H
-#define NODALRANKTWOTENSORUSEROBJECTBASEPD_H
+#pragma once
 
 #include "NodalAuxVariableUserObjectBasePD.h"
 
@@ -43,5 +42,3 @@ protected:
   /// Material properties tensor
   const MaterialProperty<RankTwoTensor> & _tensor;
 };
-
-#endif // NODALRANKTWOTENSORUSEROBJECTBASEPD_H

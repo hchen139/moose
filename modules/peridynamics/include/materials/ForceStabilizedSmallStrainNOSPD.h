@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef FORCESTABILIZEDSMALLSTRAINNOSPD_H
-#define FORCESTABILIZEDSMALLSTRAINNOSPD_H
+#pragma once
 
 #include "SmallStrainNOSPD.h"
 #include "ElasticityTensorTools.h"
@@ -36,5 +35,3 @@ protected:
   /// Material property for fictitious force
   MaterialProperty<Real> & _sf_coeff;
 };
-
-#endif // FORCESTABILIZEDSMALLSTRAINNOSPD_H

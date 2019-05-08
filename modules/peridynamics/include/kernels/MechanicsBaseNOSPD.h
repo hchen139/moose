@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef MECHANICSBASENOSPD_H
-#define MECHANICSBASENOSPD_H
+#pragma once
 
 #include "MechanicsBasePD.h"
 
@@ -45,5 +44,3 @@ protected:
   const MaterialProperty<RankFourTensor> & _Jacobian_mult;
   ///@}
 };
-
-#endif // MECHANICSBASENOSPD_H

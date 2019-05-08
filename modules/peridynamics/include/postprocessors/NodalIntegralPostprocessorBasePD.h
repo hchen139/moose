@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef NODALINTEGRALPOSTPROCESSORBASEPD_H
-#define NODALINTEGRALPOSTPROCESSORBASEPD_H
+#pragma once
 
 #include "NodalPostprocessorBasePD.h"
 
@@ -42,5 +41,3 @@ protected:
   /// nodal area integral result
   Real _integral_value;
 };
-
-#endif // NODALINTEGRALPOSTPROCESSORBASEPD

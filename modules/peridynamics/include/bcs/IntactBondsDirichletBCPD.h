@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef INTACTBONDSDIRICHLETBCPD_H
-#define INTACTBONDSDIRICHLETBCPD_H
+#pragma once
 
 #include "NodalBC.h"
 #include "PeridynamicsMesh.h"
@@ -40,5 +39,3 @@ protected:
   /// value of the AuxVariable for number of intact bonds associated with each material point
   const VariableValue & _intact_bonds_val;
 };
-
-#endif // INTACTBONDSDIRICHLETBCPD_H

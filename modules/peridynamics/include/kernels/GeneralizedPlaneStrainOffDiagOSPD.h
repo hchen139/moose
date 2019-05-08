@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef GENERALIZEDPLANESTRAINOFFDIAGOSPD_H
-#define GENERALIZEDPLANESTRAINOFFDIAGOSPD_H
+#pragma once
 
 #include "MechanicsBasePD.h"
 
@@ -64,5 +63,3 @@ protected:
   /// The variable number of the scalar out-of-plane strain variable
   const unsigned int _scalar_out_of_plane_strain_var_num;
 };
-
-#endif // GENERALIZEDPLANESTRAINOFFDIAGOSPD_H

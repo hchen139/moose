@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef AUXKERNELBASEPD_H
-#define AUXKERNELBASEPD_H
+#pragma once
 
 #include "AuxKernel.h"
 
@@ -33,5 +32,3 @@ protected:
   /// Problem dimension
   const unsigned int _dim;
 };
-
-#endif // AUXKERNELBASEPD_H

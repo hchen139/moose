@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef GENERALUSEROBJECTBASEPD_H
-#define GENERALUSEROBJECTBASEPD_H
+#pragma once
 
 #include "GeneralUserObject.h"
 #include "PeridynamicsMesh.h"
@@ -30,5 +29,3 @@ protected:
   /// Reference to peridynamics mesh
   PeridynamicsMesh & _pdmesh;
 };
-
-#endif // GENERALUSEROBJECTBASEPD_H

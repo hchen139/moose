@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef THERMALMATERIALBASEBPD_H
-#define THERMALMATERIALBASEBPD_H
+#pragma once
 
 #include "MaterialBasePD.h"
 
@@ -66,5 +65,3 @@ protected:
   /// Micro-conductivity
   Real _Kij;
 };
-
-#endif // THERMALMATERIALBASEBPD_H

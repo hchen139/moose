@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef PERIDYNAMICSMESH_H
-#define PERIDYNAMICSMESH_H
+#pragma once
 
 #include "MooseMesh.h"
 #include "MooseApp.h"
@@ -149,10 +148,11 @@ public:
   Real getHorizon(dof_id_type node_id);
 
 protected:
-  ///@{ Horizon size
+  ///@{ Horizon size control parameters
   const Real _horizon_radius;
   const bool _has_horizon_number;
   const Real _horizon_number;
+  const Real _horizons_ratio;
   ///@}
 
   ///@{ Information for crack generation
@@ -182,9 +182,6 @@ protected:
 
   /// Neighbor lists for each material point determined using the horizon
   std::vector<std::vector<dof_id_type>> & _horizon_neighbors;
-
-  /// Neighbor lists for each material point determined using bond-associated horizon
-  std::vector<std::vector<dof_id_type>> _bah_neighbors;
 
   /// Bond lists associated with material points
   std::vector<std::vector<dof_id_type>> & _node_associated_bonds;
@@ -243,5 +240,3 @@ protected:
    */
   bool checkSegmentIntersectSegment(Point seg1_p1, Point seg1_p2, Point seg2_p1, Point seg2_p2);
 };
-
-#endif // PERIDYNAMICSMESH_H

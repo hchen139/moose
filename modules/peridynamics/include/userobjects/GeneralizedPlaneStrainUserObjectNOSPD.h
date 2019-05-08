@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef GENERALIZEDPLANESTRAINUSEROBJECTNOSPD_H
-#define GENERALIZEDPLANESTRAINUSEROBJECTNOSPD_H
+#pragma once
 
 #include "GeneralizedPlaneStrainUserObjectBasePD.h"
 
@@ -33,5 +32,3 @@ protected:
   /// Materials property stress
   const MaterialProperty<RankTwoTensor> & _stress;
 };
-
-#endif // GENERALIZEDPLANESTRAINUSEROBJECTNOSPD_H

@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef MESHGENERATORPD_H
-#define MESHGENERATORPD_H
+#pragma once
 
 #include "MeshGenerator.h"
 
@@ -40,5 +39,3 @@ protected:
   /// in addition to newly created PD mesh
   bool _retain_fe_mesh;
 };
-
-#endif // MESHGENERATORPD_H

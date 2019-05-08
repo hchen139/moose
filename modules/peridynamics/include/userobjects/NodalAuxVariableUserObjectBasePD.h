@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef NODALAUXVARIABLEUSEROBJECTBASEPD_H
-#define NODALAUXVARIABLEUSEROBJECTBASEPD_H
+#pragma once
 
 #include "ElementUserObjectBasePD.h"
 
@@ -43,5 +42,3 @@ protected:
   /// Pointer to the aux variable this userobject operates on
   MooseVariable * _aux_var;
 };
-
-#endif // NODALAUXVARIABLEUSEROBJECTBASEPD_H

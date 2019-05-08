@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef HEATSOURCEBPD_H
-#define HEATSOURCEBPD_H
+#pragma once
 
 #include "KernelBasePD.h"
 
@@ -33,5 +32,3 @@ protected:
   Function * _power_density_function;
   ///@}
 };
-
-#endif // HEATSOURCEBPD_H

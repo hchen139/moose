@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef NODALPOSTPROCESSORBASEPD_H
-#define NODALPOSTPROCESSORBASEPD_H
+#pragma once
 
 #include "NodalPostprocessor.h"
 #include "PeridynamicsMesh.h"
@@ -34,5 +33,3 @@ protected:
   /// Mesh dimension
   const unsigned int _dim;
 };
-
-#endif // NODALPOSTPROCESSORBASEPD

@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef PARAMETRICMATERIALBASEPD_H
-#define PARAMETRICMATERIALBASEPD_H
+#pragma once
 
 #include "MechanicsMaterialBasePD.h"
 #include "RankFourTensor.h"
@@ -85,5 +84,3 @@ protected:
   /// Elasticity tensor
   RankFourTensor _Cijkl;
 };
-
-#endif // PARAMETRICMATERIALBASEPD_H

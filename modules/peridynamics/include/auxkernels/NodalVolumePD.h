@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef NODALVOLUMEPD_H
-#define NODALVOLUMEPD_H
+#pragma once
 
 #include "AuxKernelBasePD.h"
 
@@ -29,5 +28,3 @@ public:
 protected:
   Real computeValue() override;
 };
-
-#endif // NODALVOLUMEPD_H

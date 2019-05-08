@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef NODALFUNCTIONSL2NORMPD_H
-#define NODALFUNCTIONSL2NORMPD_H
+#pragma once
 
 #include "NodalIntegralPostprocessorBasePD.h"
 
@@ -42,5 +41,3 @@ protected:
   Function * _func_2;
   ///@}
 };
-
-#endif // NODALFUNCTIONSL2NORMPD

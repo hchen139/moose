@@ -39,8 +39,8 @@ void
 HeatSourceBPD::computeLocalResidual()
 {
   // get the total_bonds for each node
-  unsigned int nn_i = _pdmesh.getNNeighbors(_nodes_ij[0]->id());
-  unsigned int nn_j = _pdmesh.getNNeighbors(_nodes_ij[1]->id());
+  unsigned int nn_i = _pdmesh.getNNeighbors(_current_elem->node_id(0));
+  unsigned int nn_j = _pdmesh.getNNeighbors(_current_elem->node_id(1));
 
   if (_power_density_function)
   {

@@ -44,7 +44,7 @@ NodalAuxVariableUserObjectBasePD::execute()
 {
   for (unsigned int i = 0; i < 2; ++i)
   {
-    dof_id_type dof = _current_elem->get_node(i)->dof_number(_aux.number(), _aux_var->number(), 0);
+    dof_id_type dof = _current_elem->node_ptr(i)->dof_number(_aux.number(), _aux_var->number(), 0);
 
     computeValue(i, dof);
   }

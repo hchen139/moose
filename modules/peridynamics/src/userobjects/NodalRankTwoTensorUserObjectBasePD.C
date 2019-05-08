@@ -39,11 +39,10 @@ NodalRankTwoTensorUserObjectBasePD::NodalRankTwoTensorUserObjectBasePD(
 void
 NodalRankTwoTensorUserObjectBasePD::computeValue(unsigned int id, dof_id_type dof)
 {
-  unsigned int id_j_in_i = _pdmesh.getNeighborID(_current_elem->get_node(id)->id(),
-                                                 _current_elem->get_node(1 - id)->id());
-  Real dgb_vol_sum =
-      _pdmesh.getBondAssocHorizonVolume(_current_elem->get_node(id)->id(), id_j_in_i);
-  Real dgn_vol_sum = _pdmesh.getBondAssocHorizonVolumeSum(_current_elem->get_node(id)->id());
+  unsigned int id_j_in_i =
+      _pdmesh.getNeighborID(_current_elem->node_id(id), _current_elem->node_id(1 - id));
+  Real dgb_vol_sum = _pdmesh.getBondAssocHorizonVolume(_current_elem->node_id(id), id_j_in_i);
+  Real dgn_vol_sum = _pdmesh.getBondAssocHorizonVolumeSum(_current_elem->node_id(id));
 
   // gather volume weighted contribution
   if (_bond_status_var.getElementalValue(_current_elem) > 0.5)

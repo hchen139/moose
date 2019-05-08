@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef NODALDISPLACEMENTDIFFERENCEL2NORMPD_H
-#define NODALDISPLACEMENTDIFFERENCEL2NORMPD_H
+#pragma once
 
 #include "NodalIntegralPostprocessorBasePD.h"
 
@@ -45,5 +44,3 @@ protected:
   /// Displacement variables
   std::vector<MooseVariableFEBase *> _disp_var;
 };
-
-#endif // NODALDISPLACEMENTDIFFERENCEL2NORMPD

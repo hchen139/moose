@@ -67,8 +67,8 @@ MaterialBaseNOSPD::computeQpDeformationGradient()
   if (_dim == 2)
     _shape_tensor[_qp](2, 2) = _deformation_gradient[_qp](2, 2) = 1.0;
 
-  Node * cur_nd = _current_elem->get_node(_qp);
-  Node * end_nd = _current_elem->get_node(1 - _qp); // two nodes for edge2 element
+  const Node * cur_nd = _current_elem->node_ptr(_qp);
+  const Node * end_nd = _current_elem->node_ptr(1 - _qp); // two nodes for edge2 element
   std::vector<dof_id_type> neighbors = _pdmesh.getNeighbors(cur_nd->id());
   std::vector<dof_id_type> bonds = _pdmesh.getAssocBonds(cur_nd->id());
 

@@ -61,9 +61,9 @@ MechanicsMaterialBasePD::computeBondCurrentLength()
   for (unsigned int i = 0; i < _dim; ++i)
   {
     dxyz(i) =
-        (*_current_elem->get_node(1))(i) + _disp_var[i]->getNodalValue(*_current_elem->get_node(1));
+        (*_current_elem->node_ptr(1))(i) + _disp_var[i]->getNodalValue(*_current_elem->node_ptr(1));
     dxyz(i) -=
-        (*_current_elem->get_node(0))(i) + _disp_var[i]->getNodalValue(*_current_elem->get_node(0));
+        (*_current_elem->node_ptr(0))(i) + _disp_var[i]->getNodalValue(*_current_elem->node_ptr(0));
   }
 
   _current_length = dxyz.norm();

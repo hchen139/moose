@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef SMALLSTRAINMECHANICSNOSPD_H
-#define SMALLSTRAINMECHANICSNOSPD_H
+#pragma once
 
 #include "MechanicsBaseNOSPD.h"
 
@@ -38,5 +37,3 @@ protected:
   /// The index of displacement component
   const unsigned int _component;
 };
-
-#endif // SMALLSTRAINMECHANICSNOSPD_H

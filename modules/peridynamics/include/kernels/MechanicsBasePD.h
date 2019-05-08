@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef MECHANICSBASEPD_H
-#define MECHANICSBASEPD_H
+#pragma once
 
 #include "KernelBasePD.h"
 #include "DerivativeMaterialInterface.h"
@@ -80,5 +79,3 @@ protected:
   /// Current bond length
   Real _cur_len_ij;
 };
-
-#endif // MECHANICSBASEPD_H

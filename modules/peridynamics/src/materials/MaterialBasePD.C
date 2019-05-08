@@ -41,11 +41,11 @@ MaterialBasePD::computeProperties()
 
   for (_qp = 0; _qp < _qrule->n_points(); ++_qp)
   {
-    _horizon[_qp] = _pdmesh.getHorizon(_current_elem->get_node(_qp)->id());
-    _nv[_qp] = _pdmesh.getVolume(_current_elem->get_node(_qp)->id());
-    _nvsum[_qp] = _pdmesh.getHorizonVolume(_current_elem->get_node(_qp)->id());
+    _horizon[_qp] = _pdmesh.getHorizon(_current_elem->node_id(_qp));
+    _nv[_qp] = _pdmesh.getVolume(_current_elem->node_id(_qp));
+    _nvsum[_qp] = _pdmesh.getHorizonVolume(_current_elem->node_id(_qp));
   }
 
-  _origin_vec = *_current_elem->get_node(1) - *_current_elem->get_node(0);
+  _origin_vec = *_current_elem->node_ptr(1) - *_current_elem->node_ptr(0);
   _origin_length = _origin_vec.norm();
 }

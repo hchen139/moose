@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef GENERALIZEDPLANESTRAINACTIONPD_H
-#define GENERALIZEDPLANESTRAINACTIONPD_H
+#pragma once
 
 #include "Action.h"
 #include "MooseEnum.h"
@@ -40,4 +39,3 @@ protected:
   /// Scalar variable for out-of-plane strain variable
   VariableName _scalar_out_of_plane_strain;
 };
-#endif // GENERALIZEDPLANESTRAINACTIONPD_H

@@ -7,8 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#ifndef GHOSTELEMPD_H
-#define GHOSTELEMPD_H
+#pragma once
 
 #include "GeneralUserObjectBasePD.h"
 #include "PeridynamicsMesh.h"
@@ -38,5 +37,3 @@ protected:
    */
   void ghostElements();
 };
-
-#endif // GHOSTELEMPD_H
