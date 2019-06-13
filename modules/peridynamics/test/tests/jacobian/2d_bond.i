@@ -30,12 +30,10 @@
   [../]
 []
 
-[Modules]
-  [./Peridynamics]
-    [./Mechanics]
-    [../]
+[Modules/Peridynamics/Mechanics/Master]
+  [./all]
   [../]
-[../]
+[]
 
 [Materials]
   [./linelast]

@@ -32,13 +32,13 @@ protected:
 
   ///@{ Known displacements analytical solutions
   const bool _has_func_0;
-  Function * _func_0;
+  const Function * _func_0;
 
   const bool _has_func_1;
-  Function * _func_1;
+  const Function * _func_1;
 
   const bool _has_func_2;
-  Function * _func_2;
+  const Function * _func_2;
   ///@}
 
   /// Displacement variables

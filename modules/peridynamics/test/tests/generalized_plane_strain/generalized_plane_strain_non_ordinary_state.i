@@ -40,15 +40,15 @@
   [../]
 []
 
-[Modules]
-  [./Peridynamics]
-    [./Mechanics]
+[Modules/Peridynamics/Mechanics]
+  [./Master]
+    [./all]
       formulation = NonOrdinaryState
     [../]
-    [./GeneralizedPlaneStrain]
-      [./gps]
-        formulation = NonOrdinaryState
-      [../]
+  [../]
+  [./GeneralizedPlaneStrain]
+    [./all]
+      formulation = NonOrdinaryState
     [../]
   [../]
 []

@@ -49,17 +49,17 @@
   [../]
 []
 
-[Modules]
-  [./Peridynamics]
-    [./Mechanics]
+[Modules/Peridynamics/Mechanics]
+  [./Master]
+    [./all]
       formulation = NonOrdinaryState
       eigenstrain_names = thermal
     [../]
-    [./GeneralizedPlaneStrain]
-      [./gps]
-        formulation = NonOrdinaryState
-        eigenstrain_names = thermal
-      [../]
+  [../]
+  [./GeneralizedPlaneStrain]
+    [./all]
+      formulation = NonOrdinaryState
+      eigenstrain_names = thermal
     [../]
   [../]
 []

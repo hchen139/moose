@@ -50,12 +50,10 @@
   [../]
 []
 
-[Modules]
-  [./Peridynamics]
-    [./Mechanics]
-      formulation = NonOrdinaryState
-      finite_strain_formulation = true
-    [../]
+[Modules/Peridynamics/Mechanics/Master]
+  [./all]
+    formulation = NonOrdinaryState
+    finite_strain_formulation = true
   [../]
 []
 

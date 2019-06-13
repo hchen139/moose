@@ -51,25 +51,25 @@
   [../]
 []
 
-[Modules]
-  [./Peridynamics]
-    [./Mechanics]
+[Modules/Peridynamics/Mechanics]
+  [./Master]
+    [./all]
       formulation = OrdinaryState
       block = '1 2'
     [../]
-    [./GeneralizedPlaneStrain]
-      [./gps1]
-        formulation = OrdinaryState
-        scalar_out_of_plane_strain = scalar_strain_zz1
-        out_of_plane_stress_variable = stress_zz1
-        block = 1
-      [../]
-      [./gps2]
-        formulation = OrdinaryState
-        scalar_out_of_plane_strain = scalar_strain_zz2
-        out_of_plane_stress_variable = stress_zz2
-        block = 2
-      [../]
+  [../]
+  [./GeneralizedPlaneStrain]
+    [./block1]
+      formulation = OrdinaryState
+      scalar_out_of_plane_strain = scalar_strain_zz1
+      out_of_plane_stress_variable = stress_zz1
+      block = 1
+    [../]
+    [./block2]
+      formulation = OrdinaryState
+      scalar_out_of_plane_strain = scalar_strain_zz2
+      out_of_plane_stress_variable = stress_zz2
+      block = 2
     [../]
   [../]
 []

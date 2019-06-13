@@ -31,12 +31,10 @@
   [../]
 []
 
-[Modules]
-  [./Peridynamics]
-    [./Mechanics]
-      formulation = NonOrdinaryState
-      stabilization = Force
-    [../]
+[Modules/Peridynamics/Mechanics/Master]
+  [./all]
+    formulation = NonOrdinaryState
+    stabilization = Force
   [../]
 []
 

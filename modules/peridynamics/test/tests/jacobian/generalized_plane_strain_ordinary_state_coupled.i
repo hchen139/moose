@@ -50,16 +50,16 @@
   [../]
 []
 
-[Modules]
-  [./Peridynamics]
-    [./Mechanics]
+[Modules/Peridynamics/Mechanics]
+  [./Master]
+    [./all]
       formulation = OrdinaryState
     [../]
-    [./GeneralizedPlaneStrain]
-      [./gps]
-        formulation = OrdinaryState
-        out_of_plane_stress_variable = stress_zz
-      [../]
+  [../]
+  [./GeneralizedPlaneStrain]
+    [./all]
+      formulation = OrdinaryState
+      out_of_plane_stress_variable = stress_zz
     [../]
   [../]
 []

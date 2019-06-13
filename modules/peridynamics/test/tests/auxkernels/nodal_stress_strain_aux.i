@@ -96,11 +96,9 @@
   [../]
 []
 
-[Modules]
-  [./Peridynamics]
-    [./Mechanics]
-      formulation = OrdinaryState
-    [../]
+[Modules/Peridynamics/Mechanics/Master]
+  [./all]
+    formulation = OrdinaryState
   [../]
 []
 

@@ -29,6 +29,6 @@ protected:
 
   ///@{ Power density values
   double _power_density;
-  Function * _power_density_function;
+  const Function * _power_density_function;
   ///@}
 };

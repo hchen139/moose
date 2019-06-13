@@ -34,13 +34,11 @@
   [../]
 []
 
-[Modules]
-  [./Peridynamics]
-    [./Mechanics]
-      formulation = Bond
-    [../]
+[Modules/Peridynamics/Mechanics/Master]
+  [./all]
+    formulation = Bond
   [../]
-[../]
+[]
 
 [Kernels]
   [./heat]

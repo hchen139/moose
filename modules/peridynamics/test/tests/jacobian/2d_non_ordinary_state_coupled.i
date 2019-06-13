@@ -34,12 +34,10 @@
   [../]
 []
 
-[Modules]
-  [./Peridynamics]
-    [./Mechanics]
-      formulation = NonOrdinaryState
-      eigenstrain_names = thermal
-    [../]
+[Modules/Peridynamics/Mechanics/Master]
+  [./all]
+    formulation = NonOrdinaryState
+    eigenstrain_names = thermal
   [../]
 []
 

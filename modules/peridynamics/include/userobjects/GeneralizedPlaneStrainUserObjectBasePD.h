@@ -46,7 +46,7 @@ protected:
   const MaterialProperty<RankFourTensor> & _Cijkl;
 
   ///@{ Applied out-of-plane force parameters
-  Function & _pressure;
+  const Function & _pressure;
   const Real _factor;
   ///@}
 

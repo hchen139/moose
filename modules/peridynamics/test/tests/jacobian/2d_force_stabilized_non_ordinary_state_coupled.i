@@ -34,13 +34,11 @@
   [../]
 []
 
-[Modules]
-  [./Peridynamics]
-    [./Mechanics]
-      formulation = NonOrdinaryState
-      stabilization = Force
-      eigenstrain_names = thermal
-    [../]
+[Modules/Peridynamics/Mechanics/Master]
+  [./all]
+    formulation = NonOrdinaryState
+    stabilization = Force
+    eigenstrain_names = thermal
   [../]
 []
 

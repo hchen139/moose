@@ -46,8 +46,9 @@ PeridynamicsApp::registerObjects(Factory & factory)
 static void
 associateSyntaxInner(Syntax & syntax, ActionFactory & /*action_factory*/)
 {
-  registerSyntax("MechanicsActionPD", "Modules/Peridynamics/Mechanics");
-  registerSyntax("GeneralizedPlaneStrainActionPD", "Modules/Peridynamics/GeneralizedPlaneStrain/*");
+  registerSyntax("MechanicsActionPD", "Modules/Peridynamics/Mechanics/Master/*");
+  registerSyntax("GeneralizedPlaneStrainActionPD",
+                 "Modules/Peridynamics/Mechanics/GeneralizedPlaneStrain/*");
 }
 
 void
