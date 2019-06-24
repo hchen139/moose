@@ -22,7 +22,7 @@ mechanics system setup. It sets up force density integral Kernels for all displa
 
 The subblocks of the Mechanics action are what triggers MOOSE objects to be built. If none of the mechanics is subdomain restricted a single subblock will be used.
 
-!listing modules/peridynamics/test/tests/uniaxial_tension/2d_non_ordinary_state_finite_strain.i block=Modules/Peridynamics/Mechanics
+!listing modules/peridynamics/test/tests/simple_tests/2D_finite_strain_NOSPD.i block=Modules/Peridynamics/Mechanics
 
 If different mechanics models are needed, multiple subblocks with subdomain restrictions can be used.
 

@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "KernelBasePD.h"
+#include "PeridynamicsKernelBase.h"
 #include "DerivativeMaterialInterface.h"
 
 class MechanicsBasePD;
@@ -20,7 +20,7 @@ InputParameters validParams<MechanicsBasePD>();
 /**
  * Base kernel class for peridynamic solid mechanics models
  */
-class MechanicsBasePD : public DerivativeMaterialInterface<KernelBasePD>
+class MechanicsBasePD : public DerivativeMaterialInterface<PeridynamicsKernelBase>
 {
 public:
   MechanicsBasePD(const InputParameters & parameters);

@@ -20,12 +20,12 @@ This action sets up a generalized plane strain model, including kernel to provid
 The subblocks of the GeneralizedPlaneStrain action are what triggers MOOSE objects to be built.
 If none of the mechanics is subdomain restricted a single subblock will be used
 
-!listing modules/peridynamics/test/tests/generalized_plane_strain/generalized_plane_strain_ordinary_state.i block=Modules/Peridynamics/GeneralizedPlaneStrain
+!listing modules/peridynamics/test/tests/generalized_plane_strain/generalized_plane_strain_OSPD.i block=Modules/Peridynamics/GeneralizedPlaneStrain
 
 If different generalized plane strain models are needed, multiple subblocks with subdomain restrictions
 can be used.
 
-!listing modules/peridynamics/test/tests/generalized_plane_strain/generalized_plane_strain_ordinary_state_squares.i block=Modules/Peridynamics/GeneralizedPlaneStrain
+!listing modules/peridynamics/test/tests/generalized_plane_strain/generalized_plane_strain_squares_OSPD.i block=Modules/Peridynamics/GeneralizedPlaneStrain
 
 Parameters supplied at the `[Modules/Peridynamics/GeneralizedPlaneStrain]` level act as defaults for the GeneralizedPlaneStrain action subblocks.
 

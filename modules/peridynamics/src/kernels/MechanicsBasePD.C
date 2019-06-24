@@ -14,7 +14,7 @@ template <>
 InputParameters
 validParams<MechanicsBasePD>()
 {
-  InputParameters params = validParams<KernelBasePD>();
+  InputParameters params = validParams<PeridynamicsKernelBase>();
   params.addClassDescription(
       "Base class for calculating residual and Jacobian for peridynamic mechanic kernels");
 
@@ -27,7 +27,7 @@ validParams<MechanicsBasePD>()
 }
 
 MechanicsBasePD::MechanicsBasePD(const InputParameters & parameters)
-  : DerivativeMaterialInterface<KernelBasePD>(parameters),
+  : DerivativeMaterialInterface<PeridynamicsKernelBase>(parameters),
     _temp_coupled(isParamValid("temperature")),
     _temp_var(_temp_coupled ? &_subproblem.getVariable(_tid, getParam<VariableName>("temperature"))
                             : NULL),
@@ -55,7 +55,7 @@ MechanicsBasePD::initialSetup()
 void
 MechanicsBasePD::prepare()
 {
-  KernelBasePD::prepare();
+  PeridynamicsKernelBase::prepare();
 
   _ivardofs_ij.resize(_nnodes);
 

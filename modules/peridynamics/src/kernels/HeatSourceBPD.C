@@ -17,16 +17,17 @@ template <>
 InputParameters
 validParams<HeatSourceBPD>()
 {
-  InputParameters params = validParams<KernelBasePD>();
+  InputParameters params = validParams<PeridynamicsKernelBase>();
   params.addClassDescription("Class for calculating residual from heat source for bond-based "
                              "peridynamic heat conduction formulation");
+
   params.addRequiredParam<FunctionName>("power_density", "Volumetric heat source density");
 
   return params;
 }
 
 HeatSourceBPD::HeatSourceBPD(const InputParameters & parameters)
-  : KernelBasePD(parameters), _power_density(getFunction("power_density"))
+  : PeridynamicsKernelBase(parameters), _power_density(getFunction("power_density"))
 {
 }
 
@@ -38,6 +39,6 @@ HeatSourceBPD::computeLocalResidual()
   unsigned int nn_j = _pdmesh.getNNeighbors(_current_elem->node_id(1));
   Point p;
 
-  _local_re(0) = -_power_density.value(_t, p) * _vols_ij[0] / nn_i;
-  _local_re(1) = -_power_density.value(_t, p) * _vols_ij[1] / nn_j;
+  _local_re(0) = _power_density.value(_t, p) * _vols_ij[0] / nn_i;
+  _local_re(1) = _power_density.value(_t, p) * _vols_ij[1] / nn_j;
 }

@@ -7,7 +7,7 @@ The first peridynamic model, termed the bond-based peridynamic model (BPD), was 
 
 Later, Silling et al. [citep:Silling2007states] generalized BPD model in what is termed state-based peridynamic models (SPD) by introducing the concept of states. In SPD, the force state between two material points depends not only on their own deformation states, but also on the deformation states of other material points within their horizons. Depending on the direction of force state between a material point pair, SPD models can be classified into ordinary state-based peridynamic (OSPD) and non-ordinary state-based peridynamic (NOSPD) models.
 
-SPD models overcome several issues within BPD model, such as only permitting a fixed Poisson's ratio of 0.25, inconsistency in modeling plastic deformation for metals, and requiring a complete recast of standard continuum material models in terms of pairwise force function to permit their use within peridynamics. A review of BPD and SPD and their applications can be found in [cite:Bobaru2016handbook].
+SPD models overcome several issues within BPD model, such as only permitting a fixed Poisson's ratio of 0.25, inconsistency in modeling plastic deformation for metals, and requiring a complete recast of standard continuum material models in terms of pairwise force function to permit their use within peridynamics. A review of BPD and SPD and their applications can be found in [!cite](Bobaru2016handbook).
 
 In peridynamics theory, the Equation of Motion (EOM) for a material point $\mathbf{X}$ in the reference configuration at time $t$ is given by
 

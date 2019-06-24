@@ -20,6 +20,7 @@ validParams<IntactBondsDirichletBCPD>()
       "Class to selectively apply a Dirichlet BC based on the number of intact "
       "bonds associated with each material point. Used to stabilize nodes without "
       "a sufficient number of connections to other material points.");
+
   params.addRequiredCoupledVar(
       "intact_bonds_variable",
       "Name of auxiliary variable containing the number of intact bonds at each material point");

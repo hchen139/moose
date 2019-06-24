@@ -42,7 +42,7 @@ SmallStrainMechanicsNOSPD::computeLocalResidual()
   // Piola-Kirchhoff stress (P), and the second Piola-Kirchhoff stress (S) are approximately the
   // same. Thus, the nodal force state tensors are calculated using the Cauchy stresses,
   // i.e., T = Sigma * inv(Shape) * xi * multi.
-  // Cauchy stress is calculated as Sigma = C * E in the SmallStrainNOSPD material class.
+  // Cauchy stress is calculated as Sigma = C * E in the ComputeSmallStrainNOSPD material class.
 
   std::vector<RankTwoTensor> nodal_force(_nnodes);
   for (unsigned int nd = 0; nd < _nnodes; nd++)
@@ -79,13 +79,13 @@ SmallStrainMechanicsNOSPD::computeNonlocalJacobian()
         std::find(neighbors.begin(), neighbors.end(), _current_elem->node_id(1 - cur_nd)) -
         neighbors.begin();
     std::vector<unsigned int> BAneighbors =
-        _pdmesh.getBondAssocHorizonNeighbors(_current_elem->node_id(cur_nd), nb);
+        _pdmesh.getBondAssocHorizNeighbors(_current_elem->node_id(cur_nd), nb);
     std::vector<dof_id_type> bonds = _pdmesh.getAssocBonds(_current_elem->node_id(cur_nd));
     for (unsigned int k = 0; k < BAneighbors.size(); k++)
     {
       const Node * node_k = _pdmesh.nodePtr(neighbors[BAneighbors[k]]);
       dof[1] = node_k->dof_number(_sys.number(), _var.number(), 0);
-      const Real vol_k = _pdmesh.getVolume(neighbors[BAneighbors[k]]);
+      const Real vol_k = _pdmesh.getPDNodeVolume(neighbors[BAneighbors[k]]);
 
       // obtain bond ik's origin vector
       const RealGradient origin_vec_ijk =
@@ -193,13 +193,13 @@ SmallStrainMechanicsNOSPD::computePDNonlocalOffDiagJacobian(unsigned int jvar_nu
           std::find(neighbors.begin(), neighbors.end(), _current_elem->node_id(1 - cur_nd)) -
           neighbors.begin();
       std::vector<unsigned int> BAneighbors =
-          _pdmesh.getBondAssocHorizonNeighbors(_current_elem->node_id(cur_nd), nb);
+          _pdmesh.getBondAssocHorizNeighbors(_current_elem->node_id(cur_nd), nb);
       std::vector<dof_id_type> bonds = _pdmesh.getAssocBonds(_current_elem->node_id(cur_nd));
       for (unsigned int k = 0; k < BAneighbors.size(); k++)
       {
         const Node * node_k = _pdmesh.nodePtr(neighbors[BAneighbors[k]]);
         jvardofs_ijk[1] = node_k->dof_number(_sys.number(), jvar_num, 0);
-        const Real vol_k = _pdmesh.getVolume(neighbors[BAneighbors[k]]);
+        const Real vol_k = _pdmesh.getPDNodeVolume(neighbors[BAneighbors[k]]);
 
         // obtain bond k's origin vector
         const RealGradient origin_vec_ijk =

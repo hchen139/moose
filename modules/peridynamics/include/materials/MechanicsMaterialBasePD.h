@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "MaterialBasePD.h"
+#include "PeridynamicsMaterialBase.h"
 
 class MechanicsMaterialBasePD;
 
@@ -19,16 +19,14 @@ InputParameters validParams<MechanicsMaterialBasePD>();
 /**
  * Base material class for peridynamic solid mechanics models
  */
-class MechanicsMaterialBasePD : public MaterialBasePD
+class MechanicsMaterialBasePD : public PeridynamicsMaterialBase
 {
 public:
   MechanicsMaterialBasePD(const InputParameters & parameters);
 
 protected:
-  virtual void computeProperties() override;
-
   /**
-   * Function to compute the current length of current bond
+   * Function to compute the current bond length
    */
   void computeBondCurrentLength();
 

@@ -24,6 +24,7 @@ validParams<GeneralizedPlaneStrainOffDiagNOSPD>()
       "Class for calculating off-diagonal Jacobian corresponding to "
       "coupling between displacements (or temperature) with scalar out-of-plane strain for "
       "generalized plane strain using SNOSPD formulation");
+
   params.addCoupledVar("scalar_out_of_plane_strain",
                        "Scalar variable for strain in the out-of-plane direction");
 
@@ -70,8 +71,9 @@ GeneralizedPlaneStrainOffDiagNOSPD::computeDispPartialOffDiagJacobianScalar(unsi
   // scalar_out_of_plane_strain for coupling with displacements
 
   DenseMatrix<Number> & ken = _assembly.jacobianBlock(_var.number(), jvar_num);
-  DenseMatrix<Number> & kne = _assembly.jacobianBlock(jvar_num, _var.number());
-  MooseVariableScalar & jv = _sys.getScalarVariable(_tid, jvar_num);
+  DenseMatrix<Number> kne(ken.n(), ken.m());
+  kne.zero();
+  MooseVariableScalar & jvar = _sys.getScalarVariable(_tid, jvar_num);
 
   // fill in the column corresponding to the scalar variable
   std::vector<RankTwoTensor> dSdE33(_nnodes);
@@ -81,7 +83,7 @@ GeneralizedPlaneStrainOffDiagNOSPD::computeDispPartialOffDiagJacobianScalar(unsi
         dSdE33[nd](i, j) = _Jacobian_mult[nd](i, j, 2, 2);
 
   for (_i = 0; _i < _test.size(); ++_i)
-    for (_j = 0; _j < jv.order(); ++_j)
+    for (_j = 0; _j < jvar.order(); ++_j)
       ken(_i, _j) += (_i == _j ? -1 : 1) *
                      (_multi[0] * (dSdE33[0] * _shape[0].inverse()).row(component) +
                       _multi[1] * (dSdE33[1] * _shape[1].inverse()).row(component)) *
@@ -92,6 +94,11 @@ GeneralizedPlaneStrainOffDiagNOSPD::computeDispPartialOffDiagJacobianScalar(unsi
                _dg_node_vsum_ij[0] * _bond_status_ij; // node i
   kne(0, 1) += computeDSDU(component, 1)(2, 2) * _vols_ij[1] * _dg_bond_vsum_ij[1] /
                _dg_node_vsum_ij[1] * _bond_status_ij; // node j
+
+  std::vector<dof_id_type> ivardofs(_nnodes);
+  ivardofs[0] = _current_elem->node_ptr(0)->dof_number(_sys.number(), _var.number(), 0);
+  ivardofs[1] = _current_elem->node_ptr(1)->dof_number(_sys.number(), _var.number(), 0);
+  _assembly.cacheJacobianBlock(kne, jvar.dofIndices(), ivardofs, jvar.scalingFactor());
 }
 
 void
@@ -103,8 +110,9 @@ GeneralizedPlaneStrainOffDiagNOSPD::computeDispFullOffDiagJacobianScalar(unsigne
   // off-diagonal jacobian entries on the column and row corresponding to
   // scalar_out_of_plane_strain for coupling with displacements
   DenseMatrix<Number> & ken = _assembly.jacobianBlock(_var.number(), jvar_num);
-  DenseMatrix<Number> & kne = _assembly.jacobianBlock(jvar_num, _var.number());
-  MooseVariableScalar & jv = _sys.getScalarVariable(_tid, jvar_num);
+  DenseMatrix<Number> kne(ken.n(), ken.m());
+  kne.zero();
+  MooseVariableScalar & jvar = _sys.getScalarVariable(_tid, jvar_num);
 
   // fill in the column corresponding to the scalar variable
   std::vector<RankTwoTensor> dSdE33(_nnodes);
@@ -114,7 +122,7 @@ GeneralizedPlaneStrainOffDiagNOSPD::computeDispFullOffDiagJacobianScalar(unsigne
         dSdE33[nd](i, j) = _Jacobian_mult[nd](i, j, 2, 2);
 
   for (_i = 0; _i < _test.size(); ++_i)
-    for (_j = 0; _j < jv.order(); ++_j)
+    for (_j = 0; _j < jvar.order(); ++_j)
       ken(_i, _j) += (_i == _j ? -1 : 1) *
                      (_multi[0] * (dSdE33[0] * _shape[0].inverse()).row(component) +
                       _multi[1] * (dSdE33[1] * _shape[1].inverse()).row(component)) *
@@ -125,6 +133,11 @@ GeneralizedPlaneStrainOffDiagNOSPD::computeDispFullOffDiagJacobianScalar(unsigne
                _dg_node_vsum_ij[0] * _bond_status_ij; // node i
   kne(0, 1) += computeDSDU(component, 1)(2, 2) * _vols_ij[1] * _dg_bond_vsum_ij[1] /
                _dg_node_vsum_ij[1] * _bond_status_ij; // node j
+
+  std::vector<dof_id_type> ivardofs(_nnodes);
+  ivardofs[0] = _current_elem->node_ptr(0)->dof_number(_sys.number(), _var.number(), 0);
+  ivardofs[1] = _current_elem->node_ptr(1)->dof_number(_sys.number(), _var.number(), 0);
+  _assembly.cacheJacobianBlock(kne, jvar.dofIndices(), ivardofs, jvar.scalingFactor());
 
   // NONLOCAL contribution
 
@@ -140,13 +153,13 @@ GeneralizedPlaneStrainOffDiagNOSPD::computeDispFullOffDiagJacobianScalar(unsigne
         std::find(neighbors.begin(), neighbors.end(), _current_elem->node_id(1 - cur_nd)) -
         neighbors.begin();
     std::vector<unsigned int> BAneighbors =
-        _pdmesh.getBondAssocHorizonNeighbors(_current_elem->node_id(cur_nd), nb);
+        _pdmesh.getBondAssocHorizNeighbors(_current_elem->node_id(cur_nd), nb);
     std::vector<dof_id_type> bonds = _pdmesh.getAssocBonds(_current_elem->node_id(cur_nd));
     for (unsigned int k = 0; k < BAneighbors.size(); ++k)
     {
       Node * node_k = _pdmesh.nodePtr(neighbors[BAneighbors[k]]);
       ivardofs[1] = node_k->dof_number(_sys.number(), _var.number(), 0);
-      Real vol_k = _pdmesh.getVolume(neighbors[BAneighbors[k]]);
+      Real vol_k = _pdmesh.getPDNodeVolume(neighbors[BAneighbors[k]]);
 
       // obtain bond k's origin vector
       RealGradient origin_vec_ijk = *node_k - *_pdmesh.nodePtr(_current_elem->node_id(cur_nd));
@@ -172,7 +185,7 @@ GeneralizedPlaneStrainOffDiagNOSPD::computeDispFullOffDiagJacobianScalar(unsigne
       _local_ke(0, 1) = dPdUk(2, 2) * _dg_bond_vsum_ij[cur_nd] / _dg_node_vsum_ij[cur_nd] *
                         _vols_ij[cur_nd] * _bond_status_ij * bond_status_ijk;
 
-      _assembly.cacheJacobianBlock(_local_ke, jv.dofIndices(), ivardofs, _var.scalingFactor());
+      _assembly.cacheJacobianBlock(_local_ke, jvar.dofIndices(), ivardofs, _var.scalingFactor());
     }
   }
 }
@@ -182,12 +195,10 @@ GeneralizedPlaneStrainOffDiagNOSPD::computeTempOffDiagJacobianScalar(unsigned in
 {
   // off-diagonal jacobian entries on the row corresponding to scalar_out_of_plane_strain for
   // coupling with temperature
-
   DenseMatrix<Number> & kne = _assembly.jacobianBlock(jvar_num, _var.number());
 
   // one-way coupling between the scalar_out_of_plane_strain and temperature. fill in the row
   // corresponding to the scalar_out_of_plane_strain
-
   std::vector<RankTwoTensor> dSdT(_nnodes);
   for (unsigned int nd = 0; nd < _nnodes; ++nd)
     for (unsigned int es = 0; es < _deigenstrain_dT.size(); ++es)

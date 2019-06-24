@@ -65,7 +65,7 @@ ForceStabilizedSmallStrainMechanicsNOSPD::computeLocalResidual()
   // Piola-Kirchhoff stress (P), and the second Piola-Kirchhoff stress (S) are approximately the
   // same. Thus, the nodal force state tensors are calculated using the Cauchy stresses,
   // i.e., T = Sigma * inv(Shape) * xi * multi.
-  // Cauchy stress is calculated as Sigma = C * E in the SmallStrainNOSPD material class.
+  // Cauchy stress is calculated as Sigma = C * E.
 
   std::vector<RankTwoTensor> nodal_force(_nnodes);
   for (unsigned int nd = 0; nd < _nnodes; ++nd)
@@ -111,7 +111,7 @@ ForceStabilizedSmallStrainMechanicsNOSPD::computeNonlocalJacobian()
     {
       Node * node_k = _pdmesh.nodePtr(neighbors[k]);
       dof[1] = node_k->dof_number(_sys.number(), _var.number(), 0);
-      Real vol_k = _pdmesh.getVolume(neighbors[k]);
+      Real vol_k = _pdmesh.getPDNodeVolume(neighbors[k]);
 
       // obtain bond ik's origin vector
       RealGradient origin_vec_ijk = *node_k - *_pdmesh.nodePtr(_current_elem->node_id(cur_nd));
@@ -201,7 +201,7 @@ ForceStabilizedSmallStrainMechanicsNOSPD::computePDNonlocalOffDiagJacobian(
       {
         Node * node_k = _pdmesh.nodePtr(neighbors[k]);
         jvardofs_ijk[1] = node_k->dof_number(_sys.number(), jvar_num, 0);
-        Real vol_k = _pdmesh.getVolume(neighbors[k]);
+        Real vol_k = _pdmesh.getPDNodeVolume(neighbors[k]);
 
         // obtain bond k's origin vector
         RealGradient origin_vec_ijk = *node_k - *_pdmesh.nodePtr(_current_elem->node_id(cur_nd));

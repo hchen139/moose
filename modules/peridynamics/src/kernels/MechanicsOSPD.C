@@ -62,7 +62,7 @@ MechanicsOSPD::computeNonlocalResidual()
     {
       const Node * node_k = _pdmesh.nodePtr(neighbors[k]);
       ivardofs[1 - cur_nd] = node_k->dof_number(_sys.number(), _var.number(), 0);
-      const Real vol_k = _pdmesh.getVolume(neighbors[k]);
+      const Real vol_k = _pdmesh.getPDNodeVolume(neighbors[k]);
 
       // obtain bond ik's origin length and current orientation
       RealGradient origin_ori_ijk = *node_k - *_pdmesh.nodePtr(_current_elem->node_id(cur_nd));
@@ -151,7 +151,7 @@ MechanicsOSPD::computeNonlocalJacobian()
     {
       const Node * node_k = _pdmesh.nodePtr(neighbors[k]);
       ivardofs[1 - cur_nd] = node_k->dof_number(_sys.number(), _var.number(), 0);
-      const Real vol_k = _pdmesh.getVolume(neighbors[k]);
+      const Real vol_k = _pdmesh.getPDNodeVolume(neighbors[k]);
 
       // obtain bond ik's origin length and current orientation
       RealGradient origin_ori_ijk = *node_k - *_pdmesh.nodePtr(_current_elem->node_id(cur_nd));
@@ -255,7 +255,7 @@ MechanicsOSPD::computePDNonlocalOffDiagJacobian(unsigned int jvar_num,
       const Node * node_k = _pdmesh.nodePtr(neighbors[k]);
       ivardofs[1 - cur_nd] = node_k->dof_number(_sys.number(), _var.number(), 0);
       jvardofs[1 - cur_nd] = node_k->dof_number(_sys.number(), jvar_num, 0);
-      const Real vol_k = _pdmesh.getVolume(neighbors[k]);
+      const Real vol_k = _pdmesh.getPDNodeVolume(neighbors[k]);
 
       // obtain bond k's origin length and current orientation
       RealGradient origin_ori_ijk = *node_k - *_pdmesh.nodePtr(_current_elem->node_id(cur_nd));

@@ -14,7 +14,7 @@ template <>
 InputParameters
 validParams<MechanicsMaterialBasePD>()
 {
-  InputParameters params = validParams<MaterialBasePD>();
+  InputParameters params = validParams<PeridynamicsMaterialBase>();
   params.addClassDescription("Base class for Peridynamic mechanic materials");
 
   params.addRequiredParam<std::vector<NonlinearVariableName>>(
@@ -25,7 +25,7 @@ validParams<MechanicsMaterialBasePD>()
 }
 
 MechanicsMaterialBasePD::MechanicsMaterialBasePD(const InputParameters & parameters)
-  : MaterialBasePD(parameters),
+  : PeridynamicsMaterialBase(parameters),
     _has_temp(isParamValid("temperature")),
     _temp_var(_has_temp ? &_subproblem.getVariable(_tid, getParam<VariableName>("temperature"))
                         : NULL),
@@ -43,16 +43,6 @@ MechanicsMaterialBasePD::MechanicsMaterialBasePD(const InputParameters & paramet
 }
 
 void
-MechanicsMaterialBasePD::computeProperties()
-{
-  MaterialBasePD::computeProperties();
-
-  // current length of a EDGE2 element
-  computeBondCurrentLength();
-  computeBondStretch();
-}
-
-void
 MechanicsMaterialBasePD::computeBondCurrentLength()
 {
   RealGradient dxyz;
@@ -60,10 +50,10 @@ MechanicsMaterialBasePD::computeBondCurrentLength()
 
   for (unsigned int i = 0; i < _dim; ++i)
   {
-    dxyz(i) =
-        (*_current_elem->node_ptr(1))(i) + _disp_var[i]->getNodalValue(*_current_elem->node_ptr(1));
-    dxyz(i) -=
-        (*_current_elem->node_ptr(0))(i) + _disp_var[i]->getNodalValue(*_current_elem->node_ptr(0));
+    dxyz(i) = (_pdmesh.getPDNodeCoord(_current_elem->node_id(1)))(i) +
+              _disp_var[i]->getNodalValue(*_current_elem->node_ptr(1));
+    dxyz(i) -= (_pdmesh.getPDNodeCoord(_current_elem->node_id(0)))(i) +
+               _disp_var[i]->getNodalValue(*_current_elem->node_ptr(0));
   }
 
   _current_length = dxyz.norm();
