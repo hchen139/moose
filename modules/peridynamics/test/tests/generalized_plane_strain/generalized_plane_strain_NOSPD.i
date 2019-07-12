@@ -27,6 +27,7 @@
   [../]
   [./disp_y]
   [../]
+
   [./scalar_strain_zz]
     order = FIRST
     family = SCALAR

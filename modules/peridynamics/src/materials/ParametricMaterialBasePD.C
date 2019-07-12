@@ -56,7 +56,7 @@ ParametricMaterialBasePD::ParametricMaterialBasePD(const InputParameters & param
 void
 ParametricMaterialBasePD::computeProperties()
 {
-  fetchMeshData();            // function from base class
+  setupMeshRelatedData();            // function from base class
   computeBondCurrentLength(); // current length of a bond from base class
 
   _temp[0] = _has_temp ? _temp_var->getNodalValue(*_current_elem->node_ptr(0)) : 0.0;

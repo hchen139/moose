@@ -141,7 +141,7 @@ RankTwoTensor
 NodalRankTwoPD::computeNodalTotalStrain()
 {
   std::vector<dof_id_type> neighbors = _pdmesh.getNeighbors(_current_node->id());
-  std::vector<dof_id_type> bonds = _pdmesh.getAssocBonds(_current_node->id());
+  std::vector<dof_id_type> bonds = _pdmesh.getBonds(_current_node->id());
   Real horizon = _pdmesh.getHorizon(_current_node->id());
 
   // calculate the shape tensor and prepare the deformation gradient tensor

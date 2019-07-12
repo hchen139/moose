@@ -72,96 +72,104 @@ ComputeStrainBaseNOSPD::computeQpDeformationGradient()
   _ddgraddu[_qp].zero();
   _ddgraddv[_qp].zero();
   _ddgraddw[_qp].zero();
+  _multi[_qp] = 0.0;
 
-  if (_dim == 2)
-    _shape_tensor[_qp](2, 2) = _deformation_gradient[_qp](2, 2) = 1.0;
+  // check the number of unbroken bonds for two end nodes
+  std::vector<unsigned int> intact_bonds(_nnodes, 0);
+  for (unsigned int i = 0; i < _nnodes; ++i)
+  {
+    std::vector<dof_id_type> bonds = _pdmesh.getBonds(_current_elem->node_ptr(i)->id());
+    for (unsigned int j = 0; j < bonds.size(); ++j)
+      if (_bond_status_var.getElementalValue(_pdmesh.elemPtr(bonds[j])) > 0.5)
+        intact_bonds[i]++;
+  }
 
-  const Node * cur_nd = _current_elem->node_ptr(_qp);
-  const Node * end_nd = _current_elem->node_ptr(1 - _qp); // two nodes for edge2 element
-  std::vector<dof_id_type> neighbors = _pdmesh.getNeighbors(cur_nd->id());
-  std::vector<dof_id_type> bonds = _pdmesh.getAssocBonds(cur_nd->id());
-
-  unsigned int nb = std::find(neighbors.begin(), neighbors.end(), end_nd->id()) - neighbors.begin();
-  std::vector<unsigned int> BAneighbors = _pdmesh.getBondAssocHorizNeighbors(cur_nd->id(), nb);
-
-  if (BAneighbors.size() < _dim)
-    mooseError("Not enough neighboring bonds for deformation gradient approximation for element: ",
-               _current_elem->id(),
-               ". Try to use larger bond-associated horizon!");
-
-  // check the number of intact bonds for bond-associated deformation gradient calculation
-  unsigned int intact_dg_bonds = 0;
-  for (unsigned int j = 0; j < BAneighbors.size(); ++j)
-    if (_bond_status_var.getElementalValue(_pdmesh.elemPtr(bonds[BAneighbors[j]])) > 0.5)
-      ++intact_dg_bonds;
-  // if there are no sufficient bonds to approximate the deformation gradient of current bond
-  // expand the bond-associated horizon to the full horizon
-  bool apply_bond_status = true;
-  if (intact_dg_bonds < _dim)
-    apply_bond_status = false;
-
-  // calculate the shape tensor and prepare the deformation gradient tensor
-  Real dgnodes_vsum = 0.0;
-  RealGradient ori_vec(_dim), cur_vec(_dim);
-
-  for (unsigned int j = 0; j < BAneighbors.size(); ++j)
-    if (!apply_bond_status ||
-        (apply_bond_status &&
-         _bond_status_var.getElementalValue(_pdmesh.elemPtr(bonds[BAneighbors[j]])) > 0.5))
-    {
-      Node * node_j = _pdmesh.nodePtr(neighbors[BAneighbors[j]]);
-      Real vol_j = _pdmesh.getPDNodeVolume(neighbors[BAneighbors[j]]);
-      dgnodes_vsum += vol_j;
-      ori_vec = *node_j - *_pdmesh.nodePtr(cur_nd->id());
-
-      for (unsigned int k = 0; k < _dim; ++k)
-        cur_vec(k) = ori_vec(k) + _disp_var[k]->getNodalValue(*node_j) -
-                     _disp_var[k]->getNodalValue(*cur_nd);
-
-      Real ori_len = ori_vec.norm();
-      for (unsigned int k = 0; k < _dim; ++k)
-      {
-        for (unsigned int l = 0; l < _dim; ++l)
-        {
-          _shape_tensor[_qp](k, l) += _horizon[_qp] / ori_len * ori_vec(k) * ori_vec(l) * vol_j;
-          _deformation_gradient[_qp](k, l) +=
-              _horizon[_qp] / ori_len * cur_vec(k) * ori_vec(l) * vol_j;
-        }
-        // calculate derivatives of deformation_gradient w.r.t displacements of node i
-        _ddgraddu[_qp](0, k) += -_horizon[_qp] / ori_len * ori_vec(k) * vol_j;
-        _ddgraddv[_qp](1, k) += -_horizon[_qp] / ori_len * ori_vec(k) * vol_j;
-        if (_dim == 3)
-          _ddgraddw[_qp](2, k) += -_horizon[_qp] / ori_len * ori_vec(k) * vol_j;
-      }
-    }
-
-  // force state multiplier
-  _multi[_qp] = _horizon[_qp] / _origin_length * _nv[0] * _nv[1] * dgnodes_vsum / _nvsum[_qp];
-
-  // finalize the deformation gradient and its derivatives
-  // for cases when current bond was broken, assign shape tensor and deformation gradient to unity
-  // and derivatives to zero
-  if (_bond_status_var.getElementalValue(_current_elem) < 0.5)
+  // for cases when current bond was broken and there are insuficient bonds connect at one of the
+  // two end nodes, assign shape tensor and deformation gradient to unity
+  if (_bond_status_var.getElementalValue(_current_elem) < 0.5 || intact_bonds[0] < _dim ||
+      intact_bonds[1] < _dim)
   {
     _shape_tensor[_qp] = RankTwoTensor::initIdentity;
-    _deformation_gradient[_qp] = RankTwoTensor::initIdentity;
-    _ddgraddu[_qp].zero();
-    _ddgraddv[_qp].zero();
-    _ddgraddw[_qp].zero();
+    _deformation_gradient[_qp] = _shape_tensor[_qp];
   }
   else
   {
+    if (_dim == 2)
+      _shape_tensor[_qp](2, 2) = _deformation_gradient[_qp](2, 2) = 1.0;
+
+    const Node * cur_nd = _current_elem->node_ptr(_qp);
+    const Node * end_nd = _current_elem->node_ptr(1 - _qp); // two nodes for edge2 element
+    std::vector<dof_id_type> neighbors = _pdmesh.getNeighbors(cur_nd->id());
+    std::vector<dof_id_type> bonds = _pdmesh.getBonds(cur_nd->id());
+
+    unsigned int nb =
+        std::find(neighbors.begin(), neighbors.end(), end_nd->id()) - neighbors.begin();
+    std::vector<unsigned int> dg_neighbors = _pdmesh.getDefGradNeighbors(cur_nd->id(), nb);
+
+    // check the number of intact bonds for deformation gradient calculation
+    unsigned int intact_dg_bonds = 0;
+    for (unsigned int j = 0; j < dg_neighbors.size(); ++j)
+      if (_bond_status_var.getElementalValue(_pdmesh.elemPtr(bonds[dg_neighbors[j]])) > 0.5)
+        intact_dg_bonds++;
+
+    // if there are no sufficient bonds to approximate the deformation gradient of current bond
+    // expand the bond-associated horizon to the full horizon
+    if (intact_dg_bonds < _dim)
+    {
+      dg_neighbors.clear();
+      for (unsigned int j = 0; j < neighbors.size(); ++j)
+        dg_neighbors.push_back(j);
+    }
+
+    // calculate the shape tensor and prepare the deformation gradient tensor
+    Real dgnodes_vsum = 0.0;
+    RealGradient ori_vec(_dim), cur_vec(_dim);
+
+    for (unsigned int j = 0; j < dg_neighbors.size(); ++j)
+      if (_bond_status_var.getElementalValue(_pdmesh.elemPtr(bonds[dg_neighbors[j]])) > 0.5)
+      {
+        Node * node_j = _pdmesh.nodePtr(neighbors[dg_neighbors[j]]);
+        Real vol_j = _pdmesh.getPDNodeVolume(neighbors[dg_neighbors[j]]);
+        dgnodes_vsum += vol_j;
+        ori_vec = *node_j - *_pdmesh.nodePtr(cur_nd->id());
+
+        for (unsigned int k = 0; k < _dim; ++k)
+          cur_vec(k) = ori_vec(k) + _disp_var[k]->getNodalValue(*node_j) -
+                       _disp_var[k]->getNodalValue(*cur_nd);
+
+        Real ori_len = ori_vec.norm();
+        for (unsigned int k = 0; k < _dim; ++k)
+        {
+          for (unsigned int l = 0; l < _dim; ++l)
+          {
+            _shape_tensor[_qp](k, l) +=
+                _horiz_size[_qp] / ori_len * ori_vec(k) * ori_vec(l) * vol_j;
+            _deformation_gradient[_qp](k, l) +=
+                _horiz_size[_qp] / ori_len * cur_vec(k) * ori_vec(l) * vol_j;
+          }
+          // calculate derivatives of deformation_gradient w.r.t displacements of node i
+          _ddgraddu[_qp](0, k) += -_horiz_size[_qp] / ori_len * ori_vec(k) * vol_j;
+          _ddgraddv[_qp](1, k) += -_horiz_size[_qp] / ori_len * ori_vec(k) * vol_j;
+          if (_dim == 3)
+            _ddgraddw[_qp](2, k) += -_horiz_size[_qp] / ori_len * ori_vec(k) * vol_j;
+        }
+      }
+    // finalize the deformation gradient and its derivatives
     _deformation_gradient[_qp] *= _shape_tensor[_qp].inverse();
     _ddgraddu[_qp] *= _shape_tensor[_qp].inverse();
     _ddgraddv[_qp] *= _shape_tensor[_qp].inverse();
     _ddgraddw[_qp] *= _shape_tensor[_qp].inverse();
+
+    // force state multiplier
+    _multi[_qp] = _horiz_size[_qp] / _origin_length * _node_vol[0] * _node_vol[1] * dgnodes_vsum /
+                  _horiz_vol[_qp];
   }
 }
 
 void
 ComputeStrainBaseNOSPD::computeProperties()
 {
-  fetchMeshData();            // function from base class
+  setupMeshRelatedData();     // function from base class
   computeBondCurrentLength(); // current length of a bond from base class
   computeBondStretch();       // stretch of a bond
 

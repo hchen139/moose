@@ -98,7 +98,7 @@ GeneralizedPlaneStrainOffDiagOSPD::computeDispFullOffDiagJacobianScalar(unsigned
     // calculation of jacobian contribution to current node's neighbors
     ivardofs[cur_nd] = _ivardofs_ij[cur_nd];
     neighbors = _pdmesh.getNeighbors(_current_elem->node_id(cur_nd));
-    bonds = _pdmesh.getAssocBonds(_current_elem->node_id(cur_nd));
+    bonds = _pdmesh.getBonds(_current_elem->node_id(cur_nd));
     for (unsigned int k = 0; k < neighbors.size(); k++)
     {
       Node * node_k = _pdmesh.nodePtr(neighbors[k]);
@@ -123,9 +123,9 @@ GeneralizedPlaneStrainOffDiagOSPD::computeDispFullOffDiagJacobianScalar(unsigned
       for (unsigned int m = 0; m < _dim; m++)
         for (unsigned int n = 0; n < _dim; n++)
         {
-          shape[cur_nd](m, n) += vol_k * _horizons_ij[cur_nd] / origin_len_k * origin_ori_k(m) *
+          shape[cur_nd](m, n) += vol_k * _horiz_size[cur_nd] / origin_len_k * origin_ori_k(m) *
                                  origin_ori_k(n) * bond_status_k;
-          dgrad[cur_nd](m, n) += vol_k * _horizons_ij[cur_nd] / origin_len_k * current_ori_k(m) *
+          dgrad[cur_nd](m, n) += vol_k * _horiz_size[cur_nd] / origin_len_k * current_ori_k(m) *
                                  origin_ori_k(n) * bond_status_k;
         }
 
@@ -158,14 +158,14 @@ GeneralizedPlaneStrainOffDiagOSPD::computeDispFullOffDiagJacobianScalar(unsigned
   }
 
   // off-diagonal jacobian entries on the row
-  Real dEidUi = -_vols_ij[1] * _horizons_ij[0] / _origin_vec_ij.norm() *
+  Real dEidUi = -_vols_ij[1] * _horiz_size[0] / _origin_vec_ij.norm() *
                 (_Cijkl[0](2, 2, 0, 0) *
                      (_origin_vec_ij(0) * shape[0](0, 0) + _origin_vec_ij(1) * shape[0](1, 0)) *
                      dgrad[0](component, 0) +
                  _Cijkl[0](2, 2, 1, 1) *
                      (_origin_vec_ij(0) * shape[0](0, 1) + _origin_vec_ij(1) * shape[0](1, 1)) *
                      dgrad[0](component, 1));
-  Real dEjdUj = _vols_ij[0] * _horizons_ij[1] / _origin_vec_ij.norm() *
+  Real dEjdUj = _vols_ij[0] * _horiz_size[1] / _origin_vec_ij.norm() *
                 (_Cijkl[0](2, 2, 0, 0) *
                      (_origin_vec_ij(0) * shape[1](0, 0) + _origin_vec_ij(1) * shape[1](1, 0)) *
                      dgrad[1](component, 0) +

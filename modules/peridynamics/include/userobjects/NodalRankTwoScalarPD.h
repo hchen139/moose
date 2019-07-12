@@ -25,10 +25,7 @@ class NodalRankTwoScalarPD : public NodalRankTwoUserObjectBasePD
 public:
   NodalRankTwoScalarPD(const InputParameters & parameters);
 
-  virtual void gatherWeightedValue(unsigned int id,
-                                   dof_id_type dof,
-                                   Real dgb_vol_sum,
-                                   Real dgn_vol_sum) override;
+  virtual void gatherWeightedValue(unsigned int id, dof_id_type dof, Real dg_vol_frac) override;
 
 protected:
   /**

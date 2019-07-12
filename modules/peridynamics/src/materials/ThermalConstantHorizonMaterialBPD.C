@@ -34,6 +34,6 @@ void
 ThermalConstantHorizonMaterialBPD::computePeridynamicsParams(const Real ave_thermal_conductivity)
 {
   _Kij = 3.0 * ave_thermal_conductivity / M_PI *
-         (1.0 / (MathUtils::pow(_horizon[0], _dim + 1)) +
-          1.0 / (MathUtils::pow(_horizon[1], _dim + 1)));
+         (1.0 / (MathUtils::pow(_horiz_size[0], _dim + 1)) +
+          1.0 / (MathUtils::pow(_horiz_size[1], _dim + 1)));
 }

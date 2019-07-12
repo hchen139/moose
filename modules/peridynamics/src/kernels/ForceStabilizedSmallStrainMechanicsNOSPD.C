@@ -106,7 +106,7 @@ ForceStabilizedSmallStrainMechanicsNOSPD::computeNonlocalJacobian()
     std::vector<dof_id_type> dof(_nnodes);
     dof[0] = _current_elem->node_ptr(cur_nd)->dof_number(_sys.number(), _var.number(), 0);
     std::vector<dof_id_type> neighbors = _pdmesh.getNeighbors(_current_elem->node_id(cur_nd));
-    std::vector<dof_id_type> bonds = _pdmesh.getAssocBonds(_current_elem->node_id(cur_nd));
+    std::vector<dof_id_type> bonds = _pdmesh.getBonds(_current_elem->node_id(cur_nd));
     for (unsigned int k = 0; k < neighbors.size(); ++k)
     {
       Node * node_k = _pdmesh.nodePtr(neighbors[k]);
@@ -120,7 +120,7 @@ ForceStabilizedSmallStrainMechanicsNOSPD::computeNonlocalJacobian()
       dFdUk.zero();
       for (unsigned int j = 0; j < _dim; ++j)
         dFdUk(_component, j) =
-            vol_k * _horizons_ij[cur_nd] / origin_vec_ijk.norm() * origin_vec_ijk(j);
+            vol_k * _horiz_size[cur_nd] / origin_vec_ijk.norm() * origin_vec_ijk(j);
 
       dFdUk *= _shape[cur_nd].inverse();
       RankTwoTensor dSxdUkx =
@@ -196,7 +196,7 @@ ForceStabilizedSmallStrainMechanicsNOSPD::computePDNonlocalOffDiagJacobian(
       std::vector<dof_id_type> jvardofs_ijk(_nnodes);
       jvardofs_ijk[0] = _current_elem->node_ptr(cur_nd)->dof_number(_sys.number(), jvar_num, 0);
       std::vector<dof_id_type> neighbors = _pdmesh.getNeighbors(_current_elem->node_id(cur_nd));
-      std::vector<dof_id_type> bonds = _pdmesh.getAssocBonds(_current_elem->node_id(cur_nd));
+      std::vector<dof_id_type> bonds = _pdmesh.getBonds(_current_elem->node_id(cur_nd));
       for (unsigned int k = 0; k < neighbors.size(); ++k)
       {
         Node * node_k = _pdmesh.nodePtr(neighbors[k]);
@@ -210,7 +210,7 @@ ForceStabilizedSmallStrainMechanicsNOSPD::computePDNonlocalOffDiagJacobian(
         dFdUk.zero();
         for (unsigned int j = 0; j < _dim; ++j)
           dFdUk(coupled_component, j) =
-              _horizons_ij[cur_nd] / origin_vec_ijk.norm() * origin_vec_ijk(j) * vol_k;
+              _horiz_size[cur_nd] / origin_vec_ijk.norm() * origin_vec_ijk(j) * vol_k;
 
         dFdUk *= _shape[cur_nd].inverse();
         RankTwoTensor dSxdUky =

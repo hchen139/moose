@@ -1,5 +1,3 @@
-# Tests for application of out-of-plane pressure in generalized plane strain.
-
 [GlobalParams]
   displacements = 'disp_x disp_y'
   scalar_out_of_plane_strain = scalar_strain_zz

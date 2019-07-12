@@ -39,35 +39,37 @@ ComputeSmallStrainMaterialBaseOSPD::computeBondForce()
                           (_mechanical_stretch[_qp] +
                            _poissons_ratio * (_scalar_out_of_plane_strain[0] -
                                               _alpha * (0.5 * (_temp[0] + _temp[1]) - _temp_ref))) /
-                          _origin_length * _nv[0] * _nv[1];
-    _bond_dfdT_ij[_qp] =
-        -2.0 * _b * (1.0 + _poissons_ratio) * 0.5 * _alpha / _origin_length * _nv[0] * _nv[1];
+                          _origin_length * _node_vol[0] * _node_vol[1];
+    _bond_dfdT_ij[_qp] = -2.0 * _b * (1.0 + _poissons_ratio) * 0.5 * _alpha / _origin_length *
+                         _node_vol[0] * _node_vol[1];
 
     _bond_force_i_j[_qp] =
         2.0 * _a * _d[_qp] * _d[_qp] *
         (_mechanical_stretch[_qp] + _alpha * (0.5 * (_temp[0] + _temp[1]) - _temp_ref) -
          _alpha * (_temp[_qp] - _temp_ref) +
          _poissons_ratio * (_scalar_out_of_plane_strain[0] - _alpha * (_temp[_qp] - _temp_ref))) *
-        _nv[0] * _nv[1];
-    _bond_dfdT_i_j[_qp] =
-        -2.0 * _a * _d[_qp] * _d[_qp] * (1.0 + _poissons_ratio) * _alpha * _nv[0] * _nv[1];
+        _node_vol[0] * _node_vol[1];
+    _bond_dfdT_i_j[_qp] = -2.0 * _a * _d[_qp] * _d[_qp] * (1.0 + _poissons_ratio) * _alpha *
+                          _node_vol[0] * _node_vol[1];
   }
   else
   {
-    _bond_force_ij[_qp] = 2.0 * _b * _mechanical_stretch[_qp] / _origin_length * _nv[0] * _nv[1];
-    _bond_dfdT_ij[_qp] = -2.0 * _b * 0.5 * _alpha / _origin_length * _nv[0] * _nv[1];
+    _bond_force_ij[_qp] =
+        2.0 * _b * _mechanical_stretch[_qp] / _origin_length * _node_vol[0] * _node_vol[1];
+    _bond_dfdT_ij[_qp] = -2.0 * _b * 0.5 * _alpha / _origin_length * _node_vol[0] * _node_vol[1];
 
     _bond_force_i_j[_qp] =
         2.0 * _a * _d[_qp] * _d[_qp] *
         (_mechanical_stretch[_qp] + _alpha * (0.5 * (_temp[0] + _temp[1]) - _temp_ref) -
          _alpha * (_temp[_qp] - _temp_ref)) *
-        _nv[0] * _nv[1];
-    _bond_dfdT_i_j[_qp] = -2.0 * _a * _d[_qp] * _d[_qp] * _alpha * _nv[0] * _nv[1];
+        _node_vol[0] * _node_vol[1];
+    _bond_dfdT_i_j[_qp] = -2.0 * _a * _d[_qp] * _d[_qp] * _alpha * _node_vol[0] * _node_vol[1];
   }
 
-  _bond_dfdU_ij[_qp] = 2.0 * _b / _origin_length / _origin_length * _nv[0] * _nv[1];
-  _bond_dfdU_i_j[_qp] = 2.0 * _a * _d[_qp] * _d[_qp] / _origin_length * _nv[0] * _nv[1];
+  _bond_dfdU_ij[_qp] = 2.0 * _b / _origin_length / _origin_length * _node_vol[0] * _node_vol[1];
+  _bond_dfdU_i_j[_qp] = 2.0 * _a * _d[_qp] * _d[_qp] / _origin_length * _node_vol[0] * _node_vol[1];
 
-  _bond_dfdE_ij[_qp] = 2.0 * _b * _poissons_ratio / _origin_length * _nv[0] * _nv[1];
-  _bond_dfdE_i_j[_qp] = 2.0 * _a * _d[_qp] * _d[_qp] * _poissons_ratio * _nv[0] * _nv[1];
+  _bond_dfdE_ij[_qp] = 2.0 * _b * _poissons_ratio / _origin_length * _node_vol[0] * _node_vol[1];
+  _bond_dfdE_i_j[_qp] =
+      2.0 * _a * _d[_qp] * _d[_qp] * _poissons_ratio * _node_vol[0] * _node_vol[1];
 }

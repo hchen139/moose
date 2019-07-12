@@ -24,23 +24,23 @@ PeridynamicsMaterialBase::PeridynamicsMaterialBase(const InputParameters & param
     _pdmesh(dynamic_cast<PeridynamicsMesh &>(_mesh)),
     _dim(_pdmesh.dimension()),
     _nnodes(2),
-    _horizon(_nnodes),
-    _nv(_nnodes),
-    _nvsum(_nnodes)
+    _horiz_size(_nnodes),
+    _node_vol(_nnodes),
+    _horiz_vol(_nnodes)
 {
 }
 
 void
-PeridynamicsMaterialBase::fetchMeshData()
+PeridynamicsMaterialBase::setupMeshRelatedData()
 {
   for (unsigned int i = 0; i < _nnodes; ++i)
   {
-    _horizon[i] = _pdmesh.getHorizon(_current_elem->node_id(i));
-    _nv[i] = _pdmesh.getPDNodeVolume(_current_elem->node_id(i));
-    _nvsum[i] = _pdmesh.getHorizVolume(_current_elem->node_id(i));
+    _horiz_size[i] = _pdmesh.getHorizon(_current_elem->node_id(i));
+    _node_vol[i] = _pdmesh.getPDNodeVolume(_current_elem->node_id(i));
+    _horiz_vol[i] = _pdmesh.getHorizVolume(_current_elem->node_id(i));
   }
 
-  _origin_vec =
-      _pdmesh.getPDNodeCoord(_current_elem->node_id(1)) - _pdmesh.getPDNodeCoord(_current_elem->node_id(0));
+  _origin_vec = _pdmesh.getPDNodeCoord(_current_elem->node_id(1)) -
+                _pdmesh.getPDNodeCoord(_current_elem->node_id(0));
   _origin_length = _origin_vec.norm();
 }

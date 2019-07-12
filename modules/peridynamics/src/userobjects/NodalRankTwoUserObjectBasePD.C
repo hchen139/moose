@@ -39,11 +39,10 @@ void
 NodalRankTwoUserObjectBasePD::computeValue(unsigned int id, dof_id_type dof)
 {
   unsigned int id_j_in_i =
-      _pdmesh.getNeighborID(_current_elem->node_id(id), _current_elem->node_id(1 - id));
-  Real dgb_vol_sum = _pdmesh.getBondAssocHorizVolume(_current_elem->node_id(id), id_j_in_i);
-  Real dgn_vol_sum = _pdmesh.getBondAssocHorizVolumeSum(_current_elem->node_id(id));
+      _pdmesh.getNeighborIndex(_current_elem->node_id(id), _current_elem->node_id(1 - id));
+  Real dg_vol_frac = _pdmesh.getDefGradVolFraction(_current_elem->node_id(id), id_j_in_i);
 
   // gather volume weighted contribution only if the bond is active
   if (_bond_status_var.getElementalValue(_current_elem) > 0.5)
-    gatherWeightedValue(id, dof, dgb_vol_sum, dgn_vol_sum);
+    gatherWeightedValue(id, dof, dg_vol_frac);
 }

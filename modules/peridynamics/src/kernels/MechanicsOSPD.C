@@ -57,7 +57,7 @@ MechanicsOSPD::computeNonlocalResidual()
     std::vector<dof_id_type> ivardofs(2);
     ivardofs[cur_nd] = _ivardofs_ij[cur_nd];
     std::vector<dof_id_type> neighbors = _pdmesh.getNeighbors(_current_elem->node_id(cur_nd));
-    std::vector<dof_id_type> bonds = _pdmesh.getAssocBonds(_current_elem->node_id(cur_nd));
+    std::vector<dof_id_type> bonds = _pdmesh.getBonds(_current_elem->node_id(cur_nd));
     for (unsigned int k = 0; k < neighbors.size(); ++k)
     {
       const Node * node_k = _pdmesh.nodePtr(neighbors[k]);
@@ -146,7 +146,7 @@ MechanicsOSPD::computeNonlocalJacobian()
     std::vector<dof_id_type> ivardofs(_nnodes);
     ivardofs[cur_nd] = _ivardofs_ij[cur_nd];
     std::vector<dof_id_type> neighbors = _pdmesh.getNeighbors(_current_elem->node_id(cur_nd));
-    std::vector<dof_id_type> bonds = _pdmesh.getAssocBonds(_current_elem->node_id(cur_nd));
+    std::vector<dof_id_type> bonds = _pdmesh.getBonds(_current_elem->node_id(cur_nd));
     for (unsigned int k = 0; k < neighbors.size(); ++k)
     {
       const Node * node_k = _pdmesh.nodePtr(neighbors[k]);
@@ -249,7 +249,7 @@ MechanicsOSPD::computePDNonlocalOffDiagJacobian(unsigned int jvar_num,
     ivardofs[cur_nd] = _ivardofs_ij[cur_nd];
     jvardofs[cur_nd] = jvardofs_ij[cur_nd];
     std::vector<dof_id_type> neighbors = _pdmesh.getNeighbors(_current_elem->node_id(cur_nd));
-    std::vector<dof_id_type> bonds = _pdmesh.getAssocBonds(_current_elem->node_id(cur_nd));
+    std::vector<dof_id_type> bonds = _pdmesh.getBonds(_current_elem->node_id(cur_nd));
     for (unsigned int k = 0; k < neighbors.size(); ++k)
     {
       const Node * node_k = _pdmesh.nodePtr(neighbors[k]);

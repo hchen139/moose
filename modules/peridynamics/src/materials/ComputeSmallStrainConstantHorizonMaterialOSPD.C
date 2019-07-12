@@ -37,9 +37,9 @@ ComputeSmallStrainConstantHorizonMaterialOSPD::computePeridynamicsParams()
   // _b = 2 * _b * _horizon_(i/j) * _origin_length //_origin_length will be cancelled out in parent
   // material model
   _b =
-      _origin_length * (3.0 * _dim + 6.0) * _shear_modulus / M_PI / std::pow(_horizon[0], _dim + 1);
+      _origin_length * (3.0 * _dim + 6.0) * _shear_modulus / M_PI / std::pow(_horiz_size[0], _dim + 1);
 
   // _d_i = _di * _horizon_(i/j)
-  _d[0] = (_dim / 4.0 + 1.5) / M_PI / std::pow(_horizon[0], _dim);
+  _d[0] = (_dim / 4.0 + 1.5) / M_PI / std::pow(_horiz_size[0], _dim);
   _d[1] = _d[0];
 }

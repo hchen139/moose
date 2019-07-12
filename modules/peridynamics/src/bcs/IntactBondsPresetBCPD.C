@@ -7,13 +7,13 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#include "IntactBondsDirichletBCPD.h"
+#include "IntactBondsPresetBCPD.h"
 
-registerMooseObject("PeridynamicsApp", IntactBondsDirichletBCPD);
+registerMooseObject("PeridynamicsApp", IntactBondsPresetBCPD);
 
 template <>
 InputParameters
-validParams<IntactBondsDirichletBCPD>()
+validParams<IntactBondsPresetBCPD>()
 {
   InputParameters params = validParams<NodalBC>();
   params.addClassDescription(
@@ -28,8 +28,8 @@ validParams<IntactBondsDirichletBCPD>()
   return params;
 }
 
-IntactBondsDirichletBCPD::IntactBondsDirichletBCPD(const InputParameters & parameters)
-  : NodalBC(parameters),
+IntactBondsPresetBCPD::IntactBondsPresetBCPD(const InputParameters & parameters)
+  : PresetNodalBC(parameters),
     _pdmesh(dynamic_cast<PeridynamicsMesh &>(_mesh)),
     _u_old(_var.dofValuesOld()),
     _intact_bonds_val(coupledValue("intact_bonds_variable")),
@@ -38,13 +38,13 @@ IntactBondsDirichletBCPD::IntactBondsDirichletBCPD(const InputParameters & param
 }
 
 Real
-IntactBondsDirichletBCPD::computeQpResidual()
+IntactBondsPresetBCPD::computeQpValue()
 {
-  return _u[_qp] - _u_old[_qp];
+  return _u_old[_qp];
 }
 
 bool
-IntactBondsDirichletBCPD::shouldApply()
+IntactBondsPresetBCPD::shouldApply()
 {
   bool should_apply = false;
   if (_intact_bonds_val[0] <= _max_intact_bonds)

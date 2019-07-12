@@ -26,15 +26,18 @@ public:
   PeridynamicsMaterialBase(const InputParameters & parameters);
 
 protected:
-  void fetchMeshData();
+  /**
+   * Function to setup mesh related data to be used in this class
+   */
+  void setupMeshRelatedData();
 
   ///@{ Mesh related information for material points of current bond/element
   PeridynamicsMesh & _pdmesh;
   const unsigned int _dim;
   const unsigned int _nnodes;
-  std::vector<Real> _horizon;
-  std::vector<Real> _nv;
-  std::vector<Real> _nvsum;
+  std::vector<Real> _horiz_size;
+  std::vector<Real> _node_vol;
+  std::vector<Real> _horiz_vol;
 
   RealGradient _origin_vec;
   Real _origin_length;

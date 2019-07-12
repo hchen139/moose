@@ -63,9 +63,8 @@ protected:
   const unsigned int _dim;
   const unsigned int _nnodes;
   std::vector<Real> _vols_ij;
-  std::vector<Real> _dg_bond_vsum_ij;
-  std::vector<Real> _dg_node_vsum_ij;
-  std::vector<Real> _horizons_ij;
+  std::vector<Real> _dg_vol_frac_ij;
+  std::vector<Real> _horiz_size;
   ///@}
 
   ///Vector for current bond under undefored configuration

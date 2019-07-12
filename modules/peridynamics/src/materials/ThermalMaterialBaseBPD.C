@@ -42,7 +42,7 @@ ThermalMaterialBaseBPD::ThermalMaterialBaseBPD(const InputParameters & parameter
 void
 ThermalMaterialBaseBPD::computeProperties()
 {
-  fetchMeshData(); // function from base class
+  setupMeshRelatedData(); // function from base class
 
   Real ave_thermal_conductivity = 0.0;
   for (unsigned int qp = 0; qp < _qrule->n_points(); ++qp)
@@ -59,9 +59,10 @@ ThermalMaterialBaseBPD::computeProperties()
   for (_qp = 0; _qp < _nnodes; ++_qp)
   {
     // residual term
-    _bond_heat_flow[_qp] = _Kij * (_temp[1] - _temp[0]) / _origin_length * _nv[0] * _nv[1];
+    _bond_heat_flow[_qp] =
+        _Kij * (_temp[1] - _temp[0]) / _origin_length * _node_vol[0] * _node_vol[1];
 
     // derivative of the residual term
-    _bond_dQdT[_qp] = -_Kij / _origin_length * _nv[0] * _nv[1];
+    _bond_dQdT[_qp] = -_Kij / _origin_length * _node_vol[0] * _node_vol[1];
   }
 }

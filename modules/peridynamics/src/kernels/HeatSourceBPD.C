@@ -34,11 +34,10 @@ HeatSourceBPD::HeatSourceBPD(const InputParameters & parameters)
 void
 HeatSourceBPD::computeLocalResidual()
 {
-  // get the total_bonds for each node
-  unsigned int nn_i = _pdmesh.getNNeighbors(_current_elem->node_id(0));
-  unsigned int nn_j = _pdmesh.getNNeighbors(_current_elem->node_id(1));
   Point p;
-
-  _local_re(0) = _power_density.value(_t, p) * _vols_ij[0] / nn_i;
-  _local_re(1) = _power_density.value(_t, p) * _vols_ij[1] / nn_j;
+  for (unsigned int i = 0; i < _nnodes; ++i)
+  {
+    std::vector<dof_id_type> neighbors = _pdmesh.getNeighbors(_current_elem->node_id(i));
+    _local_re(i) = _power_density.value(_t, p) * _vols_ij[i] / neighbors.size();
+  }
 }

@@ -42,10 +42,7 @@ NodalRankTwoComponentPD::NodalRankTwoComponentPD(const InputParameters & paramet
 }
 
 void
-NodalRankTwoComponentPD::gatherWeightedValue(unsigned int id,
-                                             dof_id_type dof,
-                                             Real dgb_vol_sum,
-                                             Real dgn_vol_sum)
+NodalRankTwoComponentPD::gatherWeightedValue(unsigned int id, dof_id_type dof, Real dg_vol_frac)
 {
-  _aux_sln.add(dof, _tensor[id](_i, _j) * dgb_vol_sum / dgn_vol_sum);
+  _aux_sln.add(dof, _tensor[id](_i, _j) * dg_vol_frac);
 }

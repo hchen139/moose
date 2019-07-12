@@ -32,31 +32,27 @@ PeridynamicsKernelBase::PeridynamicsKernelBase(const InputParameters & parameter
     _use_full_jacobian(getParam<bool>("full_jacobian")),
     _pdmesh(dynamic_cast<PeridynamicsMesh &>(_mesh)),
     _dim(_pdmesh.dimension()),
-    _nnodes(2) // This is designed specifically to work with EDGE2 elements, which have two nodes
+    _nnodes(2),
+    _vols_ij(_nnodes),
+    _dg_vol_frac_ij(_nnodes),
+    _horiz_size(_nnodes)
 {
 }
 
 void
 PeridynamicsKernelBase::prepare()
 {
-  _vols_ij.resize(_nnodes);
-  _dg_bond_vsum_ij.resize(_nnodes);
-  _dg_node_vsum_ij.resize(_nnodes);
-  _horizons_ij.resize(_nnodes);
-
   for (unsigned int nd = 0; nd < _nnodes; ++nd)
   {
     _vols_ij[nd] = _pdmesh.getPDNodeVolume(_current_elem->node_id(nd));
     unsigned int id_ji_in_ij =
-        _pdmesh.getNeighborID(_current_elem->node_id(nd), _current_elem->node_id(1 - nd));
-    _dg_bond_vsum_ij[nd] =
-        _pdmesh.getBondAssocHorizVolume(_current_elem->node_id(nd), id_ji_in_ij);
-    _dg_node_vsum_ij[nd] = _pdmesh.getBondAssocHorizVolumeSum(_current_elem->node_id(nd));
-    _horizons_ij[nd] = _pdmesh.getHorizon(_current_elem->node_id(nd));
+        _pdmesh.getNeighborIndex(_current_elem->node_id(nd), _current_elem->node_id(1 - nd));
+    _dg_vol_frac_ij[nd] = _pdmesh.getDefGradVolFraction(_current_elem->node_id(nd), id_ji_in_ij);
+    _horiz_size[nd] = _pdmesh.getHorizon(_current_elem->node_id(nd));
   }
 
-  _origin_vec_ij =
-      _pdmesh.getPDNodeCoord(_current_elem->node_id(1)) - _pdmesh.getPDNodeCoord(_current_elem->node_id(0));
+  _origin_vec_ij = _pdmesh.getPDNodeCoord(_current_elem->node_id(1)) -
+                   _pdmesh.getPDNodeCoord(_current_elem->node_id(0));
   _bond_status_ij = _bond_status_var.getElementalValue(_current_elem);
 }
 

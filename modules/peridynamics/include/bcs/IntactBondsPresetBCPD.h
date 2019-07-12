@@ -9,25 +9,25 @@
 
 #pragma once
 
-#include "NodalBC.h"
+#include "PresetNodalBC.h"
 #include "PeridynamicsMesh.h"
 
-class IntactBondsDirichletBCPD;
+class IntactBondsPresetBCPD;
 
 template <>
-InputParameters validParams<IntactBondsDirichletBCPD>();
+InputParameters validParams<IntactBondsPresetBCPD>();
 
 /**
- * Class to selectively apply a Dirichlet BC based on the number of intact
+ * Class to selectively apply a preset Dirichlet BC based on the number of intact
  * bonds associated with each material point. Used to stabilize nodes without
  * a sufficient number of connections to other material points.
  */
-class IntactBondsDirichletBCPD : public NodalBC
+class IntactBondsPresetBCPD : public PresetNodalBC
 {
 public:
-  IntactBondsDirichletBCPD(const InputParameters & parameters);
+  IntactBondsPresetBCPD(const InputParameters & parameters);
 
-  virtual Real computeQpResidual() override;
+  virtual Real computeQpValue() override;
   virtual bool shouldApply() override;
 
 protected:

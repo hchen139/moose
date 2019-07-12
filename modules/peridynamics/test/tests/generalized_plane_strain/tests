@@ -46,7 +46,7 @@
     exodiff = 'generalized_plane_strain_NOSPD.e'
     abs_zero = 1.5e-10
     map = false
-    requirement = 'GeneralizedPlaneStrainUserObjectOSPD shall provide the residual and diagonal jacobian entry for ordinary state-based formulation of generalized plane strain problem.'
+    requirement = 'GeneralizedPlaneStrainUserObjectNOSPD shall provide the residual and diagonal jacobian entry for non-ordinary state-based formulation of generalized plane strain problem.'
     design = 'modules/peridynamics/GeneralizedPlaneStrainUserObjectNOSPD.md'
     issues = '#11561'
   [../]

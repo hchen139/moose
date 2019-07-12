@@ -51,22 +51,17 @@ GeneralizedPlaneStrainUserObjectNOSPD::execute()
   Real nv_j = _pdmesh.getPDNodeVolume(node_j);
 
   // sum of volumes of material points used in bond-associated deformation gradient calculation
-  unsigned int id_j_in_i = _pdmesh.getNeighborID(node_i, node_j);
-  unsigned int id_i_in_j = _pdmesh.getNeighborID(node_j, node_i);
+  unsigned int id_j_in_i = _pdmesh.getNeighborIndex(node_i, node_j);
+  unsigned int id_i_in_j = _pdmesh.getNeighborIndex(node_j, node_i);
 
-  Real dg_bond_vsum_i = _pdmesh.getBondAssocHorizVolume(node_i, id_j_in_i);
-  Real dg_bond_vsum_j = _pdmesh.getBondAssocHorizVolume(node_j, id_i_in_j);
-
-  Real dg_node_vsum_i = _pdmesh.getBondAssocHorizVolumeSum(node_i);
-  Real dg_node_vsum_j = _pdmesh.getBondAssocHorizVolumeSum(node_j);
+  Real dg_vol_frac_i = _pdmesh.getDefGradVolFraction(node_i, id_j_in_i);
+  Real dg_vol_frac_j = _pdmesh.getDefGradVolFraction(node_j, id_i_in_j);
 
   // residual
-  _residual += (_stress[0](2, 2) - _pressure.value(_t, coord_i) * _factor) * nv_i * dg_bond_vsum_i /
-               dg_node_vsum_i;
-  _residual += (_stress[1](2, 2) - _pressure.value(_t, coord_j) * _factor) * nv_j * dg_bond_vsum_j /
-               dg_node_vsum_j;
+  _residual += (_stress[0](2, 2) - _pressure.value(_t, coord_i) * _factor) * nv_i * dg_vol_frac_i;
+  _residual += (_stress[1](2, 2) - _pressure.value(_t, coord_j) * _factor) * nv_j * dg_vol_frac_j;
 
   // diagonal jacobian
-  _jacobian += _Cijkl[0](2, 2, 2, 2) * nv_i * dg_bond_vsum_i / dg_node_vsum_i +
-               _Cijkl[1](2, 2, 2, 2) * nv_j * dg_bond_vsum_j / dg_node_vsum_j;
+  _jacobian +=
+      _Cijkl[0](2, 2, 2, 2) * nv_i * dg_vol_frac_i + _Cijkl[1](2, 2, 2, 2) * nv_j * dg_vol_frac_j;
 }
