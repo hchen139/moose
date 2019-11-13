@@ -3,6 +3,12 @@
   out_of_plane_strain = strain_zz
 []
 
+[Problem]
+  type = ReferenceResidualProblem
+  extra_tag_vectors = 'ref'
+  reference_vector = 'ref'
+[]
+
 [Mesh]
   # file = 2D_91.e
   #file = 2D_936.e
@@ -17,6 +23,8 @@
   [../]
 
   [./strain_zz]
+    family = MONOMIAL
+    order = CONSTANT
   [../]
 []
 
@@ -63,13 +71,23 @@
     index_i = 2
     index_j = 2
   [../]
+#  [./min_strain_zz]
+#    type = NodalExtremeValue
+#    variable = strain_zz
+#    value_type = min
+#  [../]
+#  [./max_strain_zz]
+#    type = NodalExtremeValue
+#    variable = strain_zz
+#    value_type = max
+#  [../]
   [./min_strain_zz]
-    type = NodalExtremeValue
+    type = ElementExtremeValue
     variable = strain_zz
     value_type = min
   [../]
   [./max_strain_zz]
-    type = NodalExtremeValue
+    type = ElementExtremeValue
     variable = strain_zz
     value_type = max
   [../]
@@ -77,39 +95,39 @@
 
 [BCs]
   [./left_x]
-    type = DirichletBC
+    type = PresetBC
     variable = disp_x
     boundary = 1
     value = 0.0
   [../]
   [./bottom_y]
-    type = DirichletBC
+    type = PresetBC
     variable = disp_y
     boundary = 3
     value = 0.0
   [../]
   [./right_x]
-    type = FunctionPresetBC
+    type = FunctionDirichletBC
     variable = disp_x
     boundary = 2
     #function = '7.280419e-4*(x+0.5)/((x+0.5)^2+(y+0.5)^2)*(12.499281*((x+0.5)^2+(y+0.5)^2)+5.6+(2-0.448026/((x+0.5)^2+(y+0.5)^2))*(4*(x+0.5)*(x+0.5)/((x+0.5)^2+(y+0.5)^2)-3))'
     function = '7.280419e-4*(x+0.5)/((x+0.5)^2+(y+0.5)^2)*(13.735473*((x+0.5)^2+(y+0.5)^2)+6.153846+(2-0.448026/((x+0.5)^2+(y+0.5)^2))*(4*(x+0.5)*(x+0.5)/((x+0.5)^2+(y+0.5)^2)-3))'
   [../]
   [./right_y]
-    type = FunctionPresetBC
+    type = FunctionDirichletBC
     variable = disp_y
     boundary = 2
     #function = '7.280419e-4*(y+0.5)/((x+0.5)^2+(y+0.5)^2)*(-5.356835*((x+0.5)^2+(y+0.5)^2)-1.6+(2-0.448026/((x+0.5)^2+(y+0.5)^2))*(3-4*(y+0.5)*(y+0.5)/((x+0.5)^2+(y+0.5)^2)))'
     function = '7.280419e-4*(y+0.5)/((x+0.5)^2+(y+0.5)^2)*(-4.120642*((x+0.5)^2+(y+0.5)^2)-2.153846+(2-0.448026/((x+0.5)^2+(y+0.5)^2))*(3-4*(y+0.5)*(y+0.5)/((x+0.5)^2+(y+0.5)^2)))'
   [../]
   [./top_x]
-    type = FunctionPresetBC
+    type = FunctionDirichletBC
     variable = disp_x
     boundary = 4
     function = '7.280419e-4*(x+0.5)/((x+0.5)^2+(y+0.5)^2)*(13.735473*((x+0.5)^2+(y+0.5)^2)+6.153846+(2-0.448026/((x+0.5)^2+(y+0.5)^2))*(4*(x+0.5)*(x+0.5)/((x+0.5)^2+(y+0.5)^2)-3))'
   [../]
   [./top_y]
-    type = FunctionPresetBC
+    type = FunctionDirichletBC
     variable = disp_y
     boundary = 4
     function = '7.280419e-4*(y+0.5)/((x+0.5)^2+(y+0.5)^2)*(-4.120642*((x+0.5)^2+(y+0.5)^2)-2.153846+(2-0.448026/((x+0.5)^2+(y+0.5)^2))*(3-4*(y+0.5)*(y+0.5)/((x+0.5)^2+(y+0.5)^2)))'
@@ -117,12 +135,23 @@
 []
 
 [Kernels]
-  [./TensorMechanics]
+  [./disp_x]
+    type = StressDivergenceTensors
+    variable = disp_x
+    component = 0
+    extra_vector_tags = 'ref'
+  [../]
+  [./disp_y]
+    type = StressDivergenceTensors
+    variable = disp_y
+    component = 1
+    extra_vector_tags = 'ref'
   [../]
 
   [./solid_z]
     type = WeakPlaneStress
     variable = strain_zz
+    extra_vector_tags = 'ref'
   [../]
 []
 
@@ -275,12 +304,15 @@
 [Executioner]
   type = Transient
   solve_type = PJFNK
+  nl_rel_tol = 1e-10
+  nl_abs_tol = 1e-11
 
   petsc_options = '-snes_ksp_ew'
   petsc_options_iname = '-pc_type -pc_factor_mat_solver_package -snes_lag_jacobian'
   petsc_options_value = 'lu superlu_dist 10'
 
   end_time = 1
+  automatic_scaling = true
 []
 
 [Outputs]

@@ -1,7 +1,12 @@
-
 [GlobalParams]
   displacements = 'disp_x disp_y disp_z'
   volumetric_locking_correction = true
+[]
+
+[Problem]
+  type = ReferenceResidualProblem
+  extra_tag_vectors = 'ref'
+  reference_vector = 'ref'
 []
 
 [Mesh]
@@ -82,13 +87,13 @@
     value = 0.0
   [../]
   [./right_x]
-    type = FunctionPresetBC
+    type = FunctionDirichletBC
     variable = disp_x
     boundary = 2
     function = '0.01*t'
   [../]
   [./top_y]
-    type = FunctionPresetBC
+    type = FunctionDirichletBC
     variable = disp_y
     boundary = 3
     function = '0.01*t'
@@ -97,8 +102,9 @@
 
 [Modules/TensorMechanics/Master]
   [./all]
-    use_displaced_mesh = true
     strain = FINITE
+    decomposition_method = EigenSolution
+    extra_vector_tags = 'ref'
   [../]
 []
 
@@ -203,22 +209,24 @@
 [Executioner]
   type = Transient
   solve_type = PJFNK
+  nl_rel_tol = 1e-10
+  nl_abs_tol = 1e-11
+  nl_max_its = 100
 
+  petsc_options = '-snes_ksp_ew'
   petsc_options_iname = '-pc_type -pc_factor_mat_solver_package'
   petsc_options_value = 'lu superlu_dist'
-
-  # controls for linear iterations
-  l_max_its = 100
-  l_tol = 1e-4
-
-  # controls for nonlinear iterations
-  nl_rel_tol = 1e-10
-  nl_abs_tol = 1e-5
+  line_search = none
 
   start_time = 0
-  dt = 0.05
+  dt = 0.02
   dtmin = 0.01
   end_time = 1.0
+  automatic_scaling = true
+  [Predictor]
+    type = SimplePredictor
+    scale = 1.0
+  []
 []
 
 [Outputs]

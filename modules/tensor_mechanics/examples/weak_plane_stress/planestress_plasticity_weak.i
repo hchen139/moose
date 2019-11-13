@@ -1,6 +1,13 @@
 [GlobalParams]
   displacements = 'disp_x disp_y'
   out_of_plane_strain = strain_zz
+  volumetric_locking_correction = true
+[]
+
+[Problem]
+  type = ReferenceResidualProblem
+  extra_tag_vectors = 'ref'
+  reference_vector = 'ref'
 []
 
 [Mesh]
@@ -14,6 +21,8 @@
   [../]
 
   [./strain_zz]
+    family = MONOMIAL
+    order = CONSTANT
   [../]
 []
 
@@ -85,13 +94,13 @@
     value = 0.0
   [../]
   [./right_x]
-    type = FunctionPresetBC
+    type = FunctionDirichletBC
     variable = disp_x
     boundary = 2
     function = '0.01*t'
   [../]
   [./top_y]
-    type = FunctionPresetBC
+    type = FunctionDirichletBC
     variable = disp_y
     boundary = 3
     function = '0.01*t'
@@ -104,18 +113,21 @@
     variable = disp_x
     component = 0
     use_displaced_mesh = true
+    extra_vector_tags = 'ref'
   [../]
   [./disp_y]
     type = StressDivergenceTensors
     variable = disp_y
     component = 1
     use_displaced_mesh = true
+    extra_vector_tags = 'ref'
   [../]
 
   [./solid_z]
     type = WeakPlaneStress
     variable = strain_zz
     use_displaced_mesh = true
+    extra_vector_tags = 'ref'
   [../]
 []
 
@@ -126,7 +138,6 @@
     variable = elastic_strain_xx
     index_i = 0
     index_j = 0
-    use_displaced_mesh = true
   [../]
   [./elastic_strain_xy]
     type = RankTwoAux
@@ -134,7 +145,6 @@
     variable = elastic_strain_xy
     index_i = 0
     index_j = 1
-    use_displaced_mesh = true
   [../]
   [./elastic_strain_yy]
     type = RankTwoAux
@@ -142,7 +152,6 @@
     variable = elastic_strain_yy
     index_i = 1
     index_j = 1
-    use_displaced_mesh = true
   [../]
   [./elastic_strain_zz]
     type = RankTwoAux
@@ -150,14 +159,12 @@
     variable = elastic_strain_zz
     index_i = 2
     index_j = 2
-    use_displaced_mesh = true
   [../]
 
   [./plastic_strain_eff]
     type = MaterialRealAux
     property = effective_plastic_strain
     variable = plastic_strain_eff
-    use_displaced_mesh = true
   [../]
 
   [./stress_xx]
@@ -166,7 +173,6 @@
     variable = stress_xx
     index_i = 0
     index_j = 0
-    use_displaced_mesh = true
   [../]
   [./stress_xy]
     type = RankTwoAux
@@ -174,7 +180,6 @@
     variable = stress_xy
     index_i = 0
     index_j = 1
-    use_displaced_mesh = true
   [../]
   [./stress_yy]
     type = RankTwoAux
@@ -182,7 +187,6 @@
     variable = stress_yy
     index_i = 1
     index_j = 1
-    use_displaced_mesh = true
   [../]
   [./stress_zz]
     type = RankTwoAux
@@ -190,7 +194,6 @@
     variable = stress_zz
     index_i = 2
     index_j = 2
-    use_displaced_mesh = true
   [../]
   [./vonmises]
     type = RankTwoScalarAux
@@ -198,7 +201,6 @@
     variable = vonmises
     scalar_type = VonMisesStress
     execute_on = timestep_end
-    use_displaced_mesh = true
   [../]
 []
 
@@ -210,6 +212,7 @@
   [../]
   [./strain]
     type = ComputePlaneFiniteStrain
+    decomposition_method = EigenSolution
   [../]
   [./stress]
     type = ComputeMultipleInelasticStress
@@ -219,9 +222,6 @@
     type = IsotropicPlasticityStressUpdate
     yield_stress = 2e3
     hardening_constant = 1e3
-    # relative_tolerance = 1e-20
-    # absolute_tolerance = 1e-8
-    # max_inelastic_increment = 0.000001
   [../]
 []
 
@@ -235,13 +235,24 @@
 [Executioner]
   type = Transient
   solve_type = PJFNK
+  nl_rel_tol = 1e-10
+  nl_abs_tol = 1e-11
+  nl_max_its = 100
 
+  petsc_options = '-snes_ksp_ew'
   petsc_options_iname = '-pc_type -pc_factor_mat_solver_package'
   petsc_options_value = 'lu superlu_dist'
+  line_search = none
 
-  dt = 0.05
+  start_time = 0
+  dt = 0.02
   dtmin = 0.01
   end_time = 1.0
+  automatic_scaling = true
+  [Predictor]
+    type = SimplePredictor
+    scale = 1.0
+  []
 []
 
 [Outputs]
