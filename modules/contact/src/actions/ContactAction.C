@@ -40,6 +40,9 @@ validParams<ContactAction>()
   params.addRequiredParam<BoundaryName>("slave", "The slave surface");
 
   params.addParam<MeshGeneratorName>("mesh", "", "The mesh generator for mortar method");
+  params.addParam<VariableName>("slave_gap_offset", "Offset to gap distance from slave side");
+  params.addParam<VariableName>("mapped_master_gap_offset",
+                                "Offset to gap distance mapped from master side");
 
   params.addParam<VariableName>("disp_x", "The x displacement");
   params.addParam<VariableName>("disp_y", "The y displacement");
@@ -375,12 +378,19 @@ ContactAction::addNodeFaceContact()
 
   InputParameters params = _factory.getValidParams(constraint_type);
 
-  params.applyParameters(parameters(), {"displacements"});
+  params.applyParameters(parameters(),
+                         {"displacements", "slave_gap_offset", "mapped_master_gap_offset"});
   params.set<std::vector<VariableName>>("displacements") = displacements;
   params.set<bool>("use_displaced_mesh") = true;
 
   if (_formulation != "ranfs")
   {
+    if (isParamValid("slave_gap_offset"))
+      params.set<std::vector<VariableName>>("slave_gap_offset") = {
+          getParam<VariableName>("slave_gap_offset")};
+    if (isParamValid("mapped_master_gap_offset"))
+      params.set<std::vector<VariableName>>("mapped_master_gap_offset") = {
+          getParam<VariableName>("mapped_master_gap_offset")};
     params.set<std::vector<VariableName>>("nodal_area") = {"nodal_area_" + name()};
     params.set<BoundaryName>("boundary") = _master;
   }

@@ -27,6 +27,9 @@ validParams<ContactPenetrationAuxAction>()
   InputParameters params = validParams<Action>();
   params.addRequiredParam<BoundaryName>("master", "The master surface");
   params.addRequiredParam<BoundaryName>("slave", "The slave surface");
+  params.addParam<VariableName>("slave_gap_offset", "Offset to gap distance from slave side");
+  params.addParam<VariableName>("mapped_master_gap_offset",
+                                "Offset to gap distance mapped from master side");
   params.addParam<MooseEnum>("order", orders, "The finite element order: FIRST, SECOND, etc.");
   return params;
 }
@@ -58,6 +61,12 @@ ContactPenetrationAuxAction::act()
 
     params.set<std::vector<BoundaryName>>("boundary") = {_slave};
     params.set<BoundaryName>("paired_boundary") = _master;
+    if (isParamValid("slave_gap_offset"))
+      params.set<std::vector<VariableName>>("slave_gap_offset") = {
+          getParam<VariableName>("slave_gap_offset")};
+    if (isParamValid("mapped_master_gap_offset"))
+      params.set<std::vector<VariableName>>("mapped_master_gap_offset") = {
+          getParam<VariableName>("mapped_master_gap_offset")};
     params.set<AuxVariableName>("variable") = "penetration";
     params.set<MooseEnum>("order") = _order;
 

@@ -50,6 +50,9 @@ validParams<MechanicalContactConstraint>()
       "displacements",
       "The displacements appropriate for the simulation geometry and coordinate system");
 
+  params.addCoupledVar("slave_gap_offset", "offset to the gap distance from slave side");
+  params.addCoupledVar("mapped_master_gap_offset",
+                       "offset to the gap distance mapped from master side");
   params.addRequiredCoupledVar("nodal_area", "The nodal area");
 
   params.set<bool>("use_displaced_mesh") = true;
@@ -125,6 +128,11 @@ MechanicalContactConstraint::MechanicalContactConstraint(const InputParameters &
     _mesh_dimension(_mesh.dimension()),
     _vars(3, libMesh::invalid_uint),
     _var_objects(3, nullptr),
+    _has_slave_gap_offset(isCoupled("slave_gap_offset")),
+    _slave_gap_offset_var(_has_slave_gap_offset ? getVar("slave_gap_offset", 0) : nullptr),
+    _has_mapped_master_gap_offset(isCoupled("mapped_master_gap_offset")),
+    _mapped_master_gap_offset_var(
+        _has_mapped_master_gap_offset ? getVar("mapped_master_gap_offset", 0) : nullptr),
     _nodal_area_var(getVar("nodal_area", 0)),
     _aux_system(_nodal_area_var->sys()),
     _aux_solution(_aux_system.currentSolution()),
@@ -261,7 +269,9 @@ MechanicalContactConstraint::updateAugmentedLagrangianMultiplier(bool beginning_
     if (!pinfo || pinfo->_node->n_comp(_sys.number(), _vars[_component]) < 1)
       continue;
 
-    const Real distance = pinfo->_normal * (pinfo->_closest_point - _mesh.nodeRef(slave_node_num));
+    const Real distance = pinfo->_normal * (pinfo->_closest_point - _mesh.nodeRef(slave_node_num)) -
+                          slaveGapOffset(_mesh.nodePtr(slave_node_num)) -
+                          mappedMasterGapOffset(_mesh.nodePtr(slave_node_num));
 
     if (beginning_of_step && _model == ContactModel::COULOMB)
     {
@@ -341,7 +351,9 @@ MechanicalContactConstraint::AugmentedLagrangianContactConverged()
     if (!pinfo || pinfo->_node->n_comp(_sys.number(), _vars[_component]) < 1)
       continue;
 
-    const Real distance = pinfo->_normal * (pinfo->_closest_point - _mesh.nodeRef(slave_node_num));
+    const Real distance = pinfo->_normal * (pinfo->_closest_point - _mesh.nodeRef(slave_node_num)) -
+                          slaveGapOffset(_mesh.nodePtr(slave_node_num)) -
+                          mappedMasterGapOffset(_mesh.nodePtr(slave_node_num));
 
     if (pinfo->isCaptured())
     {
@@ -368,7 +380,9 @@ MechanicalContactConstraint::AugmentedLagrangianContactConverged()
         const Real tangential_inc_slip_mag = tangential_inc_slip.norm();
 
         RealVectorValue distance_vec =
-            (pinfo->_normal * (_mesh.nodeRef(slave_node_num) - pinfo->_closest_point)) *
+            (pinfo->_normal * (_mesh.nodeRef(slave_node_num) - pinfo->_closest_point) +
+             slaveGapOffset(_mesh.nodePtr(slave_node_num)) +
+             mappedMasterGapOffset(_mesh.nodePtr(slave_node_num))) *
             pinfo->_normal;
 
         Real penalty = getPenalty(*pinfo);
@@ -506,6 +520,9 @@ MechanicalContactConstraint::computeContactForce(PenetrationInfo * pinfo, bool u
   }
 
   RealVectorValue distance_vec(_mesh.nodeRef(node->id()) - pinfo->_closest_point);
+  if (distance_vec.norm() != 0)
+    distance_vec += (slaveGapOffset(node) + mappedMasterGapOffset(node)) * pinfo->_normal *
+                    distance_vec.unit() * distance_vec.unit();
 
   const Real gap_size = -1.0 * pinfo->_normal * distance_vec;
 
@@ -632,7 +649,8 @@ MechanicalContactConstraint::computeContactForce(PenetrationInfo * pinfo, bool u
         case ContactFormulation::PENALTY:
         {
           distance_vec = pinfo->_incremental_slip +
-                         (pinfo->_normal * (_mesh.nodeRef(node->id()) - pinfo->_closest_point)) *
+                         (pinfo->_normal * (_mesh.nodeRef(node->id()) - pinfo->_closest_point) +
+                          slaveGapOffset(node) + mappedMasterGapOffset(node)) *
                              pinfo->_normal;
           pen_force = penalty * distance_vec;
 
@@ -669,7 +687,8 @@ MechanicalContactConstraint::computeContactForce(PenetrationInfo * pinfo, bool u
 
         case ContactFormulation::AUGMENTED_LAGRANGE:
         {
-          distance_vec = (pinfo->_normal * (_mesh.nodeRef(node->id()) - pinfo->_closest_point)) *
+          distance_vec = (pinfo->_normal * (_mesh.nodeRef(node->id()) - pinfo->_closest_point) +
+                          slaveGapOffset(node) + mappedMasterGapOffset(node)) *
                          pinfo->_normal;
 
           RealVectorValue contact_force_normal =
@@ -795,12 +814,15 @@ MechanicalContactConstraint::computeQpResidual(Moose::ConstraintType type)
       if (_formulation == ContactFormulation::KINEMATIC)
       {
         RealVectorValue distance_vec(*_current_node - pinfo->_closest_point);
+        if (distance_vec.norm() != 0)
+          distance_vec += (slaveGapOffset(_current_node) + mappedMasterGapOffset(_current_node)) *
+                          pinfo->_normal * distance_vec.unit() * distance_vec.unit();
+
         const Real penalty = getPenalty(*pinfo);
         RealVectorValue pen_force(penalty * distance_vec);
 
         if (_model == ContactModel::FRICTIONLESS)
           resid += pinfo->_normal(_component) * pinfo->_normal * pen_force;
-
         else if (_model == ContactModel::COULOMB)
         {
           distance_vec = distance_vec - pinfo->_incremental_slip;
@@ -817,7 +839,11 @@ MechanicalContactConstraint::computeQpResidual(Moose::ConstraintType type)
       else if (_formulation == ContactFormulation::TANGENTIAL_PENALTY &&
                _model == ContactModel::COULOMB)
       {
-        RealVectorValue distance_vec(*_current_node - pinfo->_closest_point);
+        RealVectorValue distance_vec =
+            (pinfo->_normal * (*_current_node - pinfo->_closest_point) +
+             slaveGapOffset(_current_node) + mappedMasterGapOffset(_current_node)) *
+            pinfo->_normal;
+
         const Real penalty = getPenalty(*pinfo);
         RealVectorValue pen_force(penalty * distance_vec);
         resid += pinfo->_normal(_component) * pinfo->_normal * pen_force;
@@ -1674,6 +1700,24 @@ MechanicalContactConstraint::computeQpOffDiagJacobian(Moose::ConstraintJacobianT
 }
 
 Real
+MechanicalContactConstraint::slaveGapOffset(const Node * node)
+{
+  if (_has_slave_gap_offset)
+    return _slave_gap_offset_var->getNodalValue(*node);
+  else
+    return 0.0;
+}
+
+Real
+MechanicalContactConstraint::mappedMasterGapOffset(const Node * node)
+{
+  if (_has_mapped_master_gap_offset)
+    return _mapped_master_gap_offset_var->getNodalValue(*node);
+  else
+    return 0.0;
+}
+
+Real
 MechanicalContactConstraint::nodalArea(PenetrationInfo & pinfo)
 {
   const Node * node = pinfo._node;
@@ -1688,6 +1732,7 @@ MechanicalContactConstraint::nodalArea(PenetrationInfo & pinfo)
     else
       area = 1.0; // Avoid divide by zero during initialization
   }
+
   return area;
 }
 
@@ -1833,6 +1878,7 @@ MechanicalContactConstraint::getCoupledVarComponent(unsigned int var_num, unsign
       break;
     }
   }
+
   return coupled_var_is_disp_var;
 }
 
