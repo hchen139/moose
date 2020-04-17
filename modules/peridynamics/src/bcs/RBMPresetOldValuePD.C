@@ -59,7 +59,7 @@ RBMPresetOldValuePD::shouldApply()
   for (unsigned int nb = 0; nb < neighbors.size(); ++nb)
     if (_bond_status_var->getElementalValue(_pdmesh.elemPtr(bonds[nb])) > 0.5)
     {
-      vol_nb = _pdmesh.getPDNodeVolume(neighbors[nb]);
+      vol_nb = _pdmesh.getNodeVolume(neighbors[nb]);
       origin_vec = *(_pdmesh.nodePtr(neighbors[nb])) - *_current_node;
 
       for (unsigned int k = 0; k < dim; ++k)

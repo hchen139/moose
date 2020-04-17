@@ -33,7 +33,7 @@ MechanicsActionPD::validParams()
   MooseEnum formulation_option("BOND ORDINARY_STATE NONORDINARY_STATE");
   params.addRequiredParam<MooseEnum>(
       "formulation", formulation_option, "Peridynamic formulation options");
-  MooseEnum stabilization_option("FORCE HORIZON", "HORIZON");
+  MooseEnum stabilization_option("FORCE HORIZON_I HORIZON_II", "HORIZON_I");
   params.addParam<MooseEnum>("stabilization",
                              stabilization_option,
                              "Stabilization techniques for the peridynamic correspondence model");
@@ -183,19 +183,32 @@ MechanicsActionPD::getKernelName()
   std::string name;
 
   if (_formulation == "BOND")
+  {
     name = "MechanicsBPD";
+  }
   else if (_formulation == "ORDINARY_STATE")
+  {
     name = "MechanicsOSPD";
+  }
   else if (_formulation == "NONORDINARY_STATE")
   {
     if (_stabilization == "FORCE")
-      name = "ForceStabilizedSmallStrainMechanicsNOSPD";
-    else if (_stabilization == "HORIZON")
     {
-      if (_strain == "FINITE")
-        name = "HorizonStabilizedFiniteStrainMechanicsNOSPD";
+      name = "ForceStabilizedSmallStrainMechanicsNOSPD";
+    }
+    else if (_stabilization == "HORIZON_I")
+    {
+      if (_strain == "SMALL")
+        name = "HorizonStabilizedFormISmallStrainMechanicsNOSPD";
       else
-        name = "HorizonStabilizedSmallStrainMechanicsNOSPD";
+        name = "HorizonStabilizedFormIFiniteStrainMechanicsNOSPD";
+    }
+    else if (_stabilization == "HORIZON_II")
+    {
+      if (_strain == "SMALL")
+        name = "HorizonStabilizedFormIISmallStrainMechanicsNOSPD";
+      else
+        name = "HorizonStabilizedFormIIFiniteStrainMechanicsNOSPD";
     }
     else
       paramError("stabilization", "Unknown PD stabilization scheme");

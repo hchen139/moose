@@ -81,10 +81,10 @@ GeneralizedPlaneStrainActionPD::act()
   {
     std::string k_type;
     if (_formulation == "ORDINARY_STATE")
-      k_type = "GeneralizedPlaneStrainOffDiagOSPD"; // Based on ordinary state-based model
+      k_type = "GeneralizedPlaneStrainOffDiagOSPD"; // Based on the ordinary state-based model
     else if (_formulation == "NONORDINARY_STATE")
-      k_type = "GeneralizedPlaneStrainOffDiagHNOSPD"; // Based on bond-associated non-ordinary
-                                                      // state-based model
+      k_type = "GeneralizedPlaneStrainOffDiagNOSPD"; // Based on the form I of the
+                                                       // horizon-stabilized correspondence model
     else
       paramError("formulation", "Unsupported peridynamic formulation");
 
@@ -132,7 +132,7 @@ GeneralizedPlaneStrainActionPD::act()
     if (_formulation == "ORDINARY_STATE")
       uo_type = "GeneralizedPlaneStrainUserObjectOSPD";
     else if (_formulation == "NONORDINARY_STATE")
-      uo_type = "GeneralizedPlaneStrainUserObjectHNOSPD";
+      uo_type = "GeneralizedPlaneStrainUserObjectNOSPD";
     else
       paramError("formulation", "Unsupported peridynamic formulation");
 

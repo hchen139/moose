@@ -10,8 +10,6 @@
 #include "GeneralizedPlaneStrainOffDiagOSPD.h"
 #include "MooseVariableScalar.h"
 #include "PeridynamicsMesh.h"
-#include "RankTwoTensor.h"
-#include "RankFourTensor.h"
 
 registerMooseObject("PeridynamicsApp", GeneralizedPlaneStrainOffDiagOSPD);
 
@@ -77,7 +75,7 @@ GeneralizedPlaneStrainOffDiagOSPD::computeDispFullOffDiagJacobianScalar(unsigned
 
   // LOCAL jacobian contribution
   // fill in the column corresponding to the scalar variable from bond ij
-  for (_i = 0; _i < _test.size(); _i++)
+  for (_i = 0; _i < _nnodes; _i++)
     for (_j = 0; _j < jvar.order(); _j++)
       ken(_i, _j) +=
           (_i == _j ? -1 : 1) * _current_unit_vec(component) * _bond_local_dfdE[0] * _bond_status;
@@ -106,22 +104,22 @@ GeneralizedPlaneStrainOffDiagOSPD::computeDispFullOffDiagJacobianScalar(unsigned
       {
         Node * neighbor_nb = _pdmesh.nodePtr(neighbors[nb]);
         ivardofs[1 - nd] = neighbor_nb->dof_number(_sys.number(), _var.number(), 0);
-        vol_nb = _pdmesh.getPDNodeVolume(neighbors[nb]);
+        vol_nb = _pdmesh.getNodeVolume(neighbors[nb]);
 
         // obtain bond nb's origin length and current orientation
         origin_vec_nb = *neighbor_nb - *_pdmesh.nodePtr(_current_elem->node_id(nd));
 
-        for (unsigned int k = 0; k < _dim; k++)
-          current_vec_nb(k) = origin_vec_nb(k) + _disp_var[k]->getNodalValue(*neighbor_nb) -
-                              _disp_var[k]->getNodalValue(*_current_elem->node_ptr(nd));
+        for (_i = 0; _i < _dim; ++_i)
+          current_vec_nb(_i) = origin_vec_nb(_i) + _disp_var[_i]->getNodalValue(*neighbor_nb) -
+                               _disp_var[_i]->getNodalValue(*_current_elem->node_ptr(nd));
 
-        weight = _horiz_rad[nd] / origin_vec_nb.norm();
+        weight = _horizon_radius[nd] / origin_vec_nb.norm();
         // prepare shape tensor and deformation gradient tensor for current node
-        for (unsigned int k = 0; k < _dim; k++)
-          for (unsigned int l = 0; l < _dim; l++)
+        for (_i = 0; _i < _dim; ++_i)
+          for (_j = 0; _j < _dim; ++_j)
           {
-            shape[nd](k, l) += weight * origin_vec_nb(k) * origin_vec_nb(l) * vol_nb;
-            dgrad[nd](k, l) += weight * current_vec_nb(k) * origin_vec_nb(l) * vol_nb;
+            shape[nd](_i, _j) += weight * origin_vec_nb(_i) * origin_vec_nb(_j) * vol_nb;
+            dgrad[nd](_i, _j) += weight * current_vec_nb(_i) * origin_vec_nb(_j) * vol_nb;
           }
 
         // cache the nonlocal jacobian contribution
@@ -152,13 +150,13 @@ GeneralizedPlaneStrainOffDiagOSPD::computeDispFullOffDiagJacobianScalar(unsigned
 
   // off-diagonal jacobian entries on the row
   Real dEidUi =
-      -_node_vol[1] * _horiz_rad[0] / _origin_vec.norm() *
+      -_node_vol[1] * _horizon_radius[0] / _origin_vec.norm() *
       (_Cijkl[0](2, 2, 0, 0) * (_origin_vec(0) * shape[0](0, 0) + _origin_vec(1) * shape[0](1, 0)) *
            dgrad[0](component, 0) +
        _Cijkl[0](2, 2, 1, 1) * (_origin_vec(0) * shape[0](0, 1) + _origin_vec(1) * shape[0](1, 1)) *
            dgrad[0](component, 1));
   Real dEjdUj =
-      _node_vol[0] * _horiz_rad[1] / _origin_vec.norm() *
+      _node_vol[0] * _horizon_radius[1] / _origin_vec.norm() *
       (_Cijkl[0](2, 2, 0, 0) * (_origin_vec(0) * shape[1](0, 0) + _origin_vec(1) * shape[1](1, 0)) *
            dgrad[1](component, 0) +
        _Cijkl[0](2, 2, 1, 1) * (_origin_vec(0) * shape[1](0, 1) + _origin_vec(1) * shape[1](1, 1)) *
@@ -178,8 +176,8 @@ GeneralizedPlaneStrainOffDiagOSPD::computeDispPartialOffDiagJacobianScalar(unsig
   MooseVariableScalar & jvar = _sys.getScalarVariable(_tid, jvar_num);
 
   // fill in the column corresponding to the scalar variable from bond ij
-  for (_i = 0; _i < _test.size(); _i++)
-    for (_j = 0; _j < jvar.order(); _j++)
+  for (_i = 0; _i < _nnodes; ++_i)
+    for (_j = 0; _j < jvar.order(); ++_j)
     {
       ken(_i, _j) +=
           (_i == _j ? -1 : 1) * _current_unit_vec(component) * _bond_local_dfdE[0] * _bond_status;
