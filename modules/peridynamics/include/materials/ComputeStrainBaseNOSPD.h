@@ -44,6 +44,11 @@ protected:
   virtual void computeBondHorizonQpDeformationGradient();
 
   /**
+   * Function to compute bond-associated weight based deformation gradient
+   */
+  virtual void computeBondWeightQpDeformationGradient();
+
+  /**
    * Function to compute strain tensors
    */
   virtual void computeQpStrain() = 0;
@@ -51,6 +56,9 @@ protected:
   /// Option of stabilization scheme for correspondence material model:
   /// FORCE, WEIGHT, HORIZON_I or HORIZON_II
   const MooseEnum _stabilization;
+
+  /// The power of cosine weight function used to stabilized the correpondence model
+  const unsigned int _pow;
 
   /// Plane strain problem or not, this is only used for mechanical stretch calculation
   const bool _plane_strain;

@@ -72,6 +72,16 @@
     design = 'modules/peridynamics/ForceStabilizedSmallStrainMechanicsNOSPD.md'
     issues = '#11561'
   [../]
+  [./2D_mechanics_smallstrain_WNOSPD]
+    type = 'PetscJacobianTester'
+    input = '2D_mechanics_smallstrain_WNOSPD.i'
+    ratio_tol = 1E-7
+    difference_tol = 1E10
+    requirement = 'WeightStabilizedSmallStrainMechanicsNOSPD shall provide the accurate residual
+                   and jacobian for the weight stabilized peridynamic correspondence model under small strain assumptions.'
+    design = 'modules/peridynamics/WeightStabilizedSmallStrainMechanicsNOSPD.md'
+    issues = '#11561'
+  [../]
   [./2D_mechanics_smallstrain_H1NOSPD]
     type = 'PetscJacobianTester'
     input = '2D_mechanics_smallstrain_H1NOSPD.i'
@@ -92,6 +102,18 @@
                    and jacobian for the form II of the horizon stabilized peridynamic correspondence model
                    under small strain assumptions.'
     design = 'modules/peridynamics/HorizonStabilizedFormIISmallStrainMechanicsNOSPD.md'
+    issues = '#11561'
+  [../]
+  [./2D_thermomechanics_smallstrain_WNOSPD]
+    type = 'PetscJacobianTester'
+    input = '2D_thermomechanics_smallstrain_WNOSPD.i'
+    ratio_tol = 1E-7
+    difference_tol = 1E10
+    requirement = 'WeightStabilizedSmallStrainMechanicsNOSPD and HeatConductionBPD
+                   shall provide the accurate residual and jacobian for thermomechanics problems
+                   based on the weight stabilized peridynamic correspondence model and the bond-based
+                   heat conduction model under small strain assumptions.'
+    design = 'modules/peridynamics/WeightStabilizedSmallStrainMechanicsNOSPD.md'
     issues = '#11561'
   [../]
   [./2D_thermomechanics_smallstrain_H1NOSPD]
@@ -116,6 +138,17 @@
                    of the horizon stabilized peridynamic correspondence model and the bond-based heat conduction model
                    under small strain assumptions.'
     design = 'modules/peridynamics/HorizonStabilizedFormIISmallStrainMechanicsNOSPD.md'
+    issues = '#11561'
+  [../]
+  [./3D_mechanics_smallstrain_WNOSPD]
+    type = 'PetscJacobianTester'
+    input = '3D_mechanics_smallstrain_WNOSPD.i'
+    ratio_tol = 1E-7
+    difference_tol = 1E10
+    requirement = 'WeightStabilizedSmallStrainMechanicsNOSPD shall provide the accurate residual
+                   and jacobian for the weight stabilized peridynamic correspondence model
+                   under small strain assumptions.'
+    design = 'modules/peridynamics/WeightStabilizedFormISmallStrainMechanicsNOSPD.md'
     issues = '#11561'
   [../]
   [./3D_mechanics_smallstrain_H1NOSPD]

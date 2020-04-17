@@ -48,7 +48,7 @@ protected:
   const MooseEnum _formulation;
 
   /// Option of stabilization scheme for correspondence material model:
-  /// FORCE, HORIZON_I or HORIZON_II
+  /// FORCE, WEIGHT, HORIZON_I or HORIZON_II
   const MooseEnum _stabilization;
 
   /// Option of strain formulation: SMALL or FINITE
