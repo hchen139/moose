@@ -42,7 +42,7 @@
   [../]
   [./strain]
     type = ComputePlaneSmallStrainNOSPD
-    stabilization = HORIZON
+    stabilization = SUBHORIZON
   [../]
   [./stress]
     type = ComputeLinearElasticStress

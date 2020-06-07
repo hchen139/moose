@@ -37,7 +37,7 @@
   [./Master]
     [./all]
       formulation = NONORDINARY_STATE
-      stabilization = HORIZON
+      stabilization = SUBHORIZON
     [../]
   [../]
   [./GeneralizedPlaneStrain]
@@ -55,7 +55,7 @@
   [../]
   [./strain]
     type = ComputePlaneSmallStrainNOSPD
-    stabilization = HORIZON
+    stabilization = SUBHORIZON
   [../]
   [./stress]
     type = ComputeLinearElasticStress
