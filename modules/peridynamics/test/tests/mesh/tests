@@ -77,15 +77,28 @@
     issues = '#11561'
   [../]
 
-  [./2D_3D_generate_sidesets_partial_boundary]
+  [./2D_generate_sidesets_partial_boundary]
     type = 'Exodiff'
-    input = '2D_3D_sidesets_partial_boundary.i'
+    input = '2D_sidesets_partial_boundary.i'
     cli_args = '--mesh-only'
-    exodiff = '2D_3D_sidesets_partial_boundary_in.e'
+    exodiff = '2D_sidesets_partial_boundary_in.e'
     recover = false
     map = false
     requirement = 'MeshGeneratorPD shall generate sidesets using phantom FE elements
-                   based on sidesets of mixed 2D and 3D FE meshes with partial boundary for sidesets.'
+                   based on sidesets of 2D FE mesh with partial boundary for sidesets.'
+    design = 'modules/peridynamics/MeshGeneratorPD.md'
+    issues = '#17723'
+  [../]
+
+  [./3D_generate_sidesets_partial_boundary]
+    type = 'Exodiff'
+    input = '3D_sidesets_partial_boundary.i'
+    cli_args = '--mesh-only'
+    exodiff = '3D_sidesets_partial_boundary_in.e'
+    recover = false
+    map = false
+    requirement = 'MeshGeneratorPD shall generate sidesets using phantom FE elements
+                   based on sidesets of 3D FE mesh with partial boundary for sidesets.'
     design = 'modules/peridynamics/MeshGeneratorPD.md'
     issues = '#17723'
   [../]

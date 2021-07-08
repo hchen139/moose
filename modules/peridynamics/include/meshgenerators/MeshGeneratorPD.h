@@ -30,6 +30,12 @@ public:
   std::unique_ptr<MeshBase> generate();
 
 protected:
+  /// a number used to offset the block ID after being converted into PD mesh
+  unsigned int _pd_blk_offset_number = 1000;
+
+  /// a number used to offset the block ID for phantom elements
+  unsigned int _phantom_blk_offset_number = 10000;
+
   /// Reference to the input finite element mesh
   std::unique_ptr<MeshBase> & _input;
 
