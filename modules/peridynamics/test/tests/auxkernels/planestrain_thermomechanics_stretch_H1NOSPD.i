@@ -46,7 +46,7 @@
 [Modules/Peridynamics/Mechanics/Master]
   [./all]
     formulation = NONORDINARY_STATE
-    stabilization = BOND_HORIZON_I
+    stabilization = HORIZON_I
     eigenstrain_names = thermal_strain
   [../]
 []
@@ -103,7 +103,7 @@
   [../]
   [./strain]
     type = ComputePlaneSmallStrainNOSPD
-    stabilization = BOND_HORIZON_I
+    stabilization = HORIZON_I
     eigenstrain_names = thermal_strain
     plane_strain = true
   [../]

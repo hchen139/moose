@@ -25,6 +25,7 @@ ElementUserObjectBasePD::ElementUserObjectBasePD(const InputParameters & paramet
     _bond_status_var(&_subproblem.getStandardVariable(_tid, "bond_status")),
     _aux(_fe_problem.getAuxiliarySystem()),
     _pdmesh(dynamic_cast<PeridynamicsMesh &>(_mesh)),
+    _dim(_pdmesh.dimension()),
     _nnodes(2)
 {
 }
