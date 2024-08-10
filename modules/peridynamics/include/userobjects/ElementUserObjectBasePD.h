@@ -32,6 +32,9 @@ protected:
   /// Reference to Peridynamic mesh
   PeridynamicsMesh & _pdmesh;
 
+  /// dimensionality of the problem
+  const unsigned int _dim;
+
   /// number of nodes for a edge element
   const unsigned int _nnodes;
 };

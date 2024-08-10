@@ -67,7 +67,7 @@ ComputePlaneFiniteStrainNOSPD::computeQpOutOfPlaneDeformationGradient()
   if (_scalar_out_of_plane_strain_coupled)
     return std::exp(_scalar_out_of_plane_strain[0]);
   else
-    return std::exp(_out_of_plane_strain[_qp]);
+    return std::exp(0.5 * (_out_of_plane_strain[0] + _out_of_plane_strain[1]));
 }
 
 Real
@@ -76,5 +76,5 @@ ComputePlaneFiniteStrainNOSPD::computeQpOutOfPlaneDeformationGradientOld()
   if (_scalar_out_of_plane_strain_coupled)
     return std::exp(_scalar_out_of_plane_strain_old[0]);
   else
-    return std::exp(_out_of_plane_strain_old[_qp]);
+    return std::exp(0.5 * (_out_of_plane_strain_old[0] + _out_of_plane_strain_old[1]));
 }

@@ -10,6 +10,7 @@
 #pragma once
 
 #include "ComputeStrainBaseNOSPD.h"
+#include "RankTwoTensor.h"
 #include "FactorizedRankTwoTensor.h"
 
 /**

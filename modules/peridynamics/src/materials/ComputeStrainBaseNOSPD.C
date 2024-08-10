@@ -19,11 +19,15 @@ ComputeStrainBaseNOSPD::validParams()
   params.addClassDescription(
       "Base material strain class for the peridynamic correspondence models");
 
-  MooseEnum stabilization_option("FORCE BOND_HORIZON_I BOND_HORIZON_II");
+  MooseEnum stabilization_option("FORCE WEIGHT HORIZON_I HORIZON_II");
   params.addRequiredParam<MooseEnum>(
       "stabilization",
       stabilization_option,
       "Stabilization techniques used for the peridynamic correspondence model");
+
+  params.addParam<Real>("weight_function_power",
+                        8.0,
+                        "The power of weight function used to stabilized the correpondence model");
   params.addParam<bool>("plane_strain",
                         false,
                         "Plane strain problem or not, this will affect the mechanical stretch "
@@ -37,6 +41,7 @@ ComputeStrainBaseNOSPD::validParams()
 ComputeStrainBaseNOSPD::ComputeStrainBaseNOSPD(const InputParameters & parameters)
   : DerivativeMaterialInterface<MechanicsMaterialBasePD>(parameters),
     _stabilization(getParam<MooseEnum>("stabilization")),
+    _pow(getParam<Real>("weight_function_power")),
     _plane_strain(getParam<bool>("plane_strain")),
     _Cijkl(getMaterialProperty<RankFourTensor>("elasticity_tensor")),
     _eigenstrain_names(getParam<std::vector<MaterialPropertyName>>("eigenstrain_names")),
@@ -96,7 +101,15 @@ ComputeStrainBaseNOSPD::computeQpDeformationGradient()
                        _horizon_radius[_qp] / _origin_vec.norm();
       _multi[_qp] = _horizon_radius[_qp] / _origin_vec.norm() * _node_vol[0] * _node_vol[1];
     }
-    else if (_stabilization == "BOND_HORIZON_I" || _stabilization == "BOND_HORIZON_II")
+    else if (_stabilization == "WEIGHT")
+    {
+      computeBondWeightQpDeformationGradient();
+    }
+    else if (_stabilization == "HORIZON_I")
+    {
+      computeBondHorizonQpDeformationGradient();
+    }
+    else if (_stabilization == "HORIZON_II")
       computeBondHorizonQpDeformationGradient();
     else
       paramError("stabilization",
@@ -160,6 +173,68 @@ ComputeStrainBaseNOSPD::computeConventionalQpDeformationGradient()
 }
 
 void
+ComputeStrainBaseNOSPD::computeBondWeightQpDeformationGradient()
+{
+  const Node * current_nd = _current_elem->node_ptr(_qp);
+  std::vector<dof_id_type> neighbors = _pdmesh.getNeighbors(_current_elem->node_id(_qp));
+  std::vector<dof_id_type> bonds = _pdmesh.getBonds(_current_elem->node_id(_qp));
+
+  // calculate the shape tensor and prepare the deformation gradient tensor
+  RealGradient origin_vec_nb, current_vec_nb;
+  Real vol_nb, inner_prod_nb, weight_nb;
+
+  for (unsigned int nb = 0; nb < neighbors.size(); ++nb)
+    if (_bond_status_var->getElementalValue(_pdmesh.elemPtr(bonds[nb])) > 0.5)
+    {
+      Node * neighbor_nb = _pdmesh.nodePtr(neighbors[nb]);
+      vol_nb = _pdmesh.getNodeVolume(neighbors[nb]);
+      origin_vec_nb = *neighbor_nb - *current_nd;
+
+      inner_prod_nb = 0;
+      for (unsigned int k = 0; k < _dim; ++k)
+      {
+        current_vec_nb(k) = origin_vec_nb(k) + _disp_var[k]->getNodalValue(*neighbor_nb) -
+                            _disp_var[k]->getNodalValue(*current_nd);
+        inner_prod_nb += (_qp == 0 ? 1 : -1) * _origin_vec(k) * origin_vec_nb(k);
+      }
+
+      Real len_ratio = std::abs(_origin_vec.norm() - origin_vec_nb.norm()) / _horizon_radius[_qp];
+      Real cos_angle = inner_prod_nb / (_origin_vec.norm() * origin_vec_nb.norm());
+      if (cos_angle > 1.0)
+      {
+        cos_angle = 1.0;
+      }
+      else if (cos_angle < -1.0)
+      {
+        cos_angle = -1.0;
+      }
+      weight_nb = std::exp(-_pow * len_ratio) * std::pow(0.5 + 0.5 * cos_angle, _pow);
+
+      for (unsigned int k = 0; k < _dim; ++k)
+      {
+        for (unsigned int l = 0; l < _dim; ++l)
+        {
+          _shape2[_qp](k, l) += weight_nb * origin_vec_nb(k) * origin_vec_nb(l) * vol_nb;
+          _deformation_gradient[_qp](k, l) +=
+              weight_nb * current_vec_nb(k) * origin_vec_nb(l) * vol_nb;
+        }
+        // calculate derivatives of deformation_gradient w.r.t displacements of node nb
+        _ddgraddu[_qp](0, k) += -weight_nb * origin_vec_nb(k) * vol_nb;
+        _ddgraddv[_qp](1, k) += -weight_nb * origin_vec_nb(k) * vol_nb;
+        if (_dim == 3)
+          _ddgraddw[_qp](2, k) += -weight_nb * origin_vec_nb(k) * vol_nb;
+      }
+    }
+
+  // finalize the deformation gradient tensor
+  _deformation_gradient[_qp] *= _shape2[_qp].inverse();
+  _ddgraddu[_qp] *= _shape2[_qp].inverse();
+  _ddgraddv[_qp] *= _shape2[_qp].inverse();
+  _ddgraddw[_qp] *= _shape2[_qp].inverse();
+  _multi[_qp] = _node_vol[_qp] / _horizon_vol[_qp] * _node_vol[0] * _node_vol[1];
+}
+
+void
 ComputeStrainBaseNOSPD::computeBondHorizonQpDeformationGradient()
 {
   std::vector<dof_id_type> neighbors = _pdmesh.getNeighbors(_current_elem->node_id(_qp));
@@ -219,10 +294,10 @@ ComputeStrainBaseNOSPD::computeBondHorizonQpDeformationGradient()
   }
 
   // force state multiplier
-  if (_stabilization == "BOND_HORIZON_I")
+  if (_stabilization == "HORIZON_I")
     _multi[_qp] = _horizon_radius[_qp] / _origin_vec.norm() * _node_vol[0] * _node_vol[1] *
                   dg_sub_vol / _horizon_vol[_qp];
-  else if (_stabilization == "BOND_HORIZON_II")
+  else if (_stabilization == "HORIZON_II")
     _multi[_qp] = _node_vol[_qp] * dg_sub_vol / dg_sub_vol_sum;
 }
 

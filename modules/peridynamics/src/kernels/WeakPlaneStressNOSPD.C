@@ -99,7 +99,7 @@ WeakPlaneStressNOSPD::computePDNonlocalOffDiagJacobian(unsigned int jvar_num,
       std::vector<dof_id_type> dg_neighbors =
           _pdmesh.getBondDeformationGradientNeighbors(_current_elem->node_id(nd), nb_index);
 
-      Real vol_nb, weight_nb;
+      Real vol_nb, inner_prod_nb, weight_nb;
       RealGradient origin_vec_nb;
       RankTwoTensor dFdUk, dPdUk;
 
@@ -113,7 +113,22 @@ WeakPlaneStressNOSPD::computePDNonlocalOffDiagJacobian(unsigned int jvar_num,
           origin_vec_nb = _pdmesh.getNodeCoord(neighbors[dg_neighbors[nb]]) -
                           _pdmesh.getNodeCoord(_current_elem->node_id(nd));
 
-          weight_nb = _horizon_radius[nd] / origin_vec_nb.norm();
+          inner_prod_nb = 0;
+          for (_i = 0; _i < _dim; ++_i)
+            inner_prod_nb += (nd == 0 ? 1 : -1) * _origin_vec(_i) * origin_vec_nb(_i);
+
+          Real len_ratio =
+              std::abs(_origin_vec.norm() - origin_vec_nb.norm()) / _horizon_radius[nd];
+          Real cos_angle = inner_prod_nb / (_origin_vec.norm() * origin_vec_nb.norm());
+          if (cos_angle > 1.0)
+          {
+            cos_angle = 1.0;
+          }
+          else if (cos_angle < -1.0)
+          {
+            cos_angle = -1.0;
+          }
+          weight_nb = std::exp(-5.0 * len_ratio) * std::pow(0.5 + 0.5 * cos_angle, 5.0);
 
           dFdUk.zero();
           for (unsigned int i = 0; i < _dim; ++i)

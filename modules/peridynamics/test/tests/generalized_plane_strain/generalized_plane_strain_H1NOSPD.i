@@ -43,11 +43,11 @@
   [Master]
     [all]
       formulation = NONORDINARY_STATE
-      stabilization = BOND_HORIZON_I
-    []
-  []
-  [GeneralizedPlaneStrain]
-    [all]
+      stabilization = HORIZON_I
+    [../]
+  [../]
+  [./GeneralizedPlaneStrain]
+    [./all]
       formulation = NONORDINARY_STATE
     []
   []
@@ -92,7 +92,7 @@
   []
   [strain]
     type = ComputePlaneSmallStrainNOSPD
-    stabilization = BOND_HORIZON_I
+    stabilization = HORIZON_I
     eigenstrain_names = thermal
   []
   [thermal_strain]
